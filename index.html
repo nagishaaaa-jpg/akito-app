@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ja" class="dark">
 <head>
@@ -132,31 +133,44 @@
          ========================================================= -->
     <section id="tab-calendar" class="tab-section space-y-3.5 animate-fade">
       
-      <!-- Annual Target Progress Card -->
-      <div class="glass-card rounded-2xl p-3.5 shadow-md">
-        <div class="flex items-center justify-between mb-1.5">
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-bold text-slate-300">🎯 年間目標利益 (<span id="targetYearLabel">2026</span>年)</span>
-            <button onclick="openTargetModal()" class="text-[11px] text-orange-400 bg-orange-500/10 border border-orange-500/30 px-1.5 py-0.2 rounded hover:bg-orange-500/20 font-bold">目標変更</button>
+      <!-- Today's Daily Wage + Trade P&L Motivation Card (Placed right below Iron Rule) -->
+      <div class="orange-glow-card rounded-2xl p-3.5 shadow-lg space-y-2.5">
+        <div class="flex items-center justify-between gap-1">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <span class="text-sm">🔥</span>
+            <span id="focusDateLabel" class="text-xs font-black text-orange-300 truncate">10月17日(土) のリアル日給収支</span>
+            <button onclick="openDayModal(activeFocusDateKey)" class="text-[10px] bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded font-bold shrink-0 active:scale-95">収支入力</button>
           </div>
-          <span id="annualProgressPct" class="text-xs font-black text-orange-400">0.0%</span>
+          <div class="flex items-center gap-1 shrink-0">
+            <!-- Quick Workday / Holiday Toggle for Active Day -->
+            <button id="btnQuickHolidayToggle" onclick="toggleFocusDateHoliday()" class="px-2 py-0.5 rounded-lg text-[10px] font-black border transition active:scale-95">
+              💼 出勤日
+            </button>
+            <button onclick="openWageSettingModal()" class="px-1.5 py-0.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-[10px] text-slate-300 font-bold active:scale-95" title="月給・休日数の設定">
+              ⚙️月給設定
+            </button>
+          </div>
         </div>
 
-        <!-- Progress Bar (Orange to Emerald Gradient) -->
-        <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700/60 mb-2">
-          <div id="annualProgressBar" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+        <!-- Dynamic Formula Display -->
+        <div class="bg-slate-950/80 border border-orange-500/30 rounded-xl p-3 text-center space-y-1">
+          <div id="dailyWageFormulaText" class="text-xs font-bold text-slate-200 leading-relaxed">
+            今日の日給 <span class="text-sky-300 font-extrabold">¥12,000</span> ＋ トレード <span class="text-emerald-400 font-extrabold">+¥0</span> ＝
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5">
+            <span id="dailyWageTotalBig" class="text-3xl font-black tracking-tight text-white">¥12,000！</span>
+          </div>
+          <div id="dailyWageSubInfo" class="text-[10px] text-slate-400">
+            (10月は31日間・月6日休み＝25日出勤 / 手取り30万円÷25日＝日給¥12,000計算)
+          </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs">
-          <div>
-            <span class="text-slate-400">年間累計<span class="tax-mode-badge text-[10px] ml-0.5 text-orange-400">(税引前)</span>: </span>
-            <span id="annualCurrentProfit" class="font-extrabold text-slate-100">¥0</span>
-          </div>
-          <div>
-            <span class="text-slate-400">目標 </span>
-            <span id="annualTargetDisplay" class="font-bold text-slate-300">¥1,000,000</span>
-            <span id="annualRemainingText" class="text-slate-400 ml-1">(あと¥1,000,000)</span>
-          </div>
+        <!-- Motivational Message Box -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl px-3 py-2 flex items-center gap-2">
+          <span id="dailyWageMsgIcon" class="text-base shrink-0">✨</span>
+          <p id="dailyWageMsgText" class="text-[11px] font-bold text-orange-100 leading-snug">
+            今日も本業お疲れさま！トレードなしでも着実に日給＋12,000円積み上げ✨
+          </p>
         </div>
       </div>
 
@@ -165,8 +179,11 @@
         <div class="flex items-center justify-between mb-2">
           <button onclick="changeMonth(-1)" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-200 font-bold active:scale-90 transition">‹</button>
           <div class="text-center">
-            <div id="currentMonthLabel" class="text-base font-black text-slate-100 tracking-wide">2026年 10月</div>
-            <div class="text-[11px] text-slate-400">日付タップで収支・反省メモを入力</div>
+            <div class="flex items-center justify-center gap-2">
+              <span id="currentMonthLabel" class="text-base font-black text-slate-100 tracking-wide">2026年 10月</span>
+              <span id="monthHolidayCountBadge" class="text-[10px] bg-sky-500/15 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded-full font-bold">休日 0/6日</span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-0.5">日付タップで収支・休日・反省メモを入力</div>
           </div>
           <button onclick="changeMonth(1)" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-200 font-bold active:scale-90 transition">›</button>
         </div>
@@ -174,7 +191,7 @@
         <!-- Monthly Total P&L -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-center my-2">
           <div class="text-xs text-slate-400 font-medium mb-0.5">
-            今月のトータル収支 <span class="tax-mode-badge text-emerald-400 font-bold">(税引前)</span>
+            今月のトレード収支 <span class="tax-mode-badge text-emerald-400 font-bold">(税引前)</span>
           </div>
           <div id="monthlyTotalPnL" class="text-3xl font-black tracking-tight text-slate-100">+¥0</div>
         </div>
@@ -225,6 +242,34 @@
         </h3>
         <div id="monthlyMemoList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
           <!-- Populated via JS -->
+        </div>
+      </div>
+
+      <!-- Annual Target Progress Card (Moved to bottom of Calendar tab) -->
+      <div class="glass-card rounded-2xl p-3.5 shadow-md">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-bold text-slate-300">🎯 年間目標利益 (<span id="targetYearLabel">2026</span>年)</span>
+            <button onclick="openTargetModal()" class="text-[11px] text-orange-400 bg-orange-500/10 border border-orange-500/30 px-1.5 py-0.2 rounded hover:bg-orange-500/20 font-bold">目標変更</button>
+          </div>
+          <span id="annualProgressPct" class="text-xs font-black text-orange-400">0.0%</span>
+        </div>
+
+        <!-- Progress Bar (Orange to Emerald Gradient) -->
+        <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700/60 mb-2">
+          <div id="annualProgressBar" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <span class="text-slate-400">年間累計<span class="tax-mode-badge text-[10px] ml-0.5 text-orange-400">(税引前)</span>: </span>
+            <span id="annualCurrentProfit" class="font-extrabold text-slate-100">¥0</span>
+          </div>
+          <div>
+            <span class="text-slate-400">目標 </span>
+            <span id="annualTargetDisplay" class="font-bold text-slate-300">¥1,000,000</span>
+            <span id="annualRemainingText" class="text-slate-400 ml-1">(あと¥1,000,000)</span>
+          </div>
         </div>
       </div>
     </section>
@@ -791,7 +836,7 @@
   </nav>
 
   <!-- ================= MODALS ================= -->
-  <!-- 1. Day Entry Modal (Calendar P&L + Memo) -->
+  <!-- 1. Day Entry Modal (Calendar P&L + Holiday Switch + Memo) -->
   <div id="dayEntryModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3.5 shadow-2xl animate-fade">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
@@ -799,9 +844,24 @@
         <button onclick="closeDayModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
       </div>
 
+      <!-- Workday / Holiday Selector -->
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">🗓️ この日の勤務区分 (日給計算と連動)</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btnModalWorkday" onclick="setModalHolidayState(false)" class="py-2 px-3 rounded-xl border text-xs font-black flex items-center justify-center gap-1.5 transition">
+            <span>💼 出勤日</span>
+            <span id="lblModalWorkWage" class="text-[10px] opacity-80">(+¥12,000)</span>
+          </button>
+          <button type="button" id="btnModalHoliday" onclick="setModalHolidayState(true)" class="py-2 px-3 rounded-xl border text-xs font-black flex items-center justify-center gap-1.5 transition">
+            <span>🏖️ 休日 (休み)</span>
+            <span class="text-[10px] opacity-80">(日給¥0)</span>
+          </button>
+        </div>
+      </div>
+
       <div>
         <label class="block text-xs font-bold text-slate-300 mb-1">💰 確定損益 (円)</label>
-        <input type="number" id="modalPnLInput" placeholder="例: 25000 または -12000" step="1000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-lg font-black text-white focus:border-orange-400 outline-none">
+        <input type="number" id="modalPnLInput" oninput="updateModalLiveWagePreview()" placeholder="例: 25000 または -12000" step="1000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-lg font-black text-white focus:border-orange-400 outline-none">
         
         <!-- Quick Calculator Buttons -->
         <div class="grid grid-cols-4 gap-1.5 mt-2">
@@ -814,16 +874,53 @@
           <button onclick="addModalPnL(-10000)" class="py-1.5 rounded-lg bg-rose-950/70 border border-rose-500/40 text-rose-300 text-xs font-extrabold active:scale-95">-1万</button>
           <button onclick="setModalPnL(0)" class="py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-slate-300 text-xs font-bold active:scale-95">クリア</button>
         </div>
+
+        <!-- Live Combined Wage Preview inside Modal -->
+        <div id="modalWagePreviewBox" class="mt-2 bg-slate-950/90 border border-slate-800 rounded-xl px-3 py-2 text-[11px] font-bold text-center text-orange-200">
+          今日の日給 ¥12,000 ＋ トレード ¥0 ＝ 合計 ¥12,000！
+        </div>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-slate-300 mb-1">📝 トレード振り返り・反省メモ</label>
-        <textarea id="modalMemoInput" rows="3" placeholder="例: ルール通り押し目買い成功！ / 指標前に飛び乗って反省…" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:border-orange-400 outline-none"></textarea>
+        <textarea id="modalMemoInput" rows="2" placeholder="例: ルール通り押し目買い成功！ / 指標前に飛び乗って反省…" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:border-orange-400 outline-none"></textarea>
       </div>
 
       <div class="flex gap-2 pt-1">
         <button onclick="deleteDayEntry()" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950 border border-slate-700 text-rose-400 text-xs font-bold">削除</button>
         <button onclick="saveDayEntry()" class="flex-1 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-black shadow">記録を保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Monthly Take-home Pay & Holiday Settings Modal -->
+  <div id="wageSettingModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl animate-fade">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-orange-400">💼 本業の手取り月給・休日数設定</h3>
+        <button onclick="closeWageSettingModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <p class="text-[11px] text-slate-300 leading-relaxed">
+        毎月の固定手取り額と月間の基本休日数を設定すると、その月の日数（28〜31日）に合わせて1日あたりの本業日給を自動で割り出します。
+      </p>
+      <div class="grid grid-cols-2 gap-2.5">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">毎月の手取り固定給 (円)</label>
+          <input type="number" id="inputMonthlyTakeHome" value="300000" step="10000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm font-black text-white outline-none focus:border-orange-400">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">月間の基本休日数 (日)</label>
+          <input type="number" id="inputMonthlyHolidays" value="6" step="1" min="0" max="25" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm font-black text-orange-300 outline-none focus:border-orange-400">
+        </div>
+      </div>
+      <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-[11px] text-slate-300 space-y-1">
+        <div>・31日の月 (25日出勤): <span class="font-bold text-white">日給 ¥12,000</span></div>
+        <div>・30日の月 (24日出勤): <span class="font-bold text-white">日給 ¥12,500</span></div>
+        <div>・28日の月 (22日出勤): <span class="font-bold text-white">日給 ¥13,636</span></div>
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeWageSettingModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">キャンセル</button>
+        <button onclick="saveWageSettings()" class="flex-1 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-black">設定を保存</button>
       </div>
     </div>
   </div>
@@ -967,11 +1064,15 @@ function doGet() {
       annualTarget: 1000000,
       currentYear: 2026,
       currentMonth: 10, // 1-12
+      workSettings: {
+        monthlyTakeHome: 300000, // 固定給手取り30万円
+        monthlyHolidays: 6       // 月6日休み
+      },
       trades: {
-        '2026-10-02': { pnl: 25000, memo: '日経225 押し目買い成功！ルール通り利確◎' },
-        '2026-10-06': { pnl: -12000, memo: '原油 損切りラインでしっかり撤退。深追いせずOK' },
-        '2026-10-09': { pnl: 42000, memo: '豪ドル円 トレンドフォローで伸ばせた！' },
-        '2026-10-14': { pnl: 18500, memo: '日経225 反発狙い、微益だけど堅実' }
+        '2026-10-02': { pnl: 25000, memo: '日経225 押し目買い成功！ルール通り利確◎', isHoliday: false },
+        '2026-10-06': { pnl: -12000, memo: '原油 損切りラインでしっかり撤退。深追いせずOK', isHoliday: false },
+        '2026-10-09': { pnl: 42000, memo: '豪ドル円 トレンドフォローで伸ばせた！', isHoliday: true },
+        '2026-10-14': { pnl: 18500, memo: '日経225 反発狙い、微益だけど堅実', isHoliday: false }
       },
       lotCalc: {
         instrument: 'JP225',
@@ -997,6 +1098,26 @@ function doGet() {
     };
 
     let selectedDateKey = null;
+    let activeFocusDateKey = null;
+    let modalIsHolidayTemp = false;
+
+    function getTodayDateKey() {
+      const now = new Date();
+      const y = now.getFullYear();
+      const m = String(now.getMonth() + 1).padStart(2, '0');
+      const d = String(now.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    // Calculate daily base wage for any (year, month) based on days in that month
+    function getDailyBaseWageForMonth(year, month) {
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const takeHome = Number(appState.workSettings?.monthlyTakeHome) || 300000;
+      const holidays = Number(appState.workSettings?.monthlyHolidays) ?? 6;
+      const workDays = Math.max(1, daysInMonth - holidays);
+      const dailyWage = Math.round(takeHome / workDays);
+      return { daysInMonth, takeHome, holidays, workDays, dailyWage };
+    }
 
     // Built-in XM-focused Instrument Definitions
     const BASE_INSTRUMENTS = {
@@ -1134,9 +1255,15 @@ function doGet() {
           if (parsed.tax) {
             appState.tax = Object.assign({}, appState.tax, parsed.tax);
           }
+          if (parsed.workSettings) {
+            appState.workSettings = Object.assign({ monthlyTakeHome: 300000, monthlyHolidays: 6 }, parsed.workSettings);
+          }
         }
       } catch (e) {
         console.error('State load error:', e);
+      }
+      if (!activeFocusDateKey) {
+        activeFocusDateKey = getTodayDateKey();
       }
     }
 
@@ -1250,6 +1377,138 @@ function doGet() {
       return netRatio;
     }
 
+    function ensureFocusDateInCurrentMonth() {
+      const ymPrefix = `${appState.currentYear}-${String(appState.currentMonth).padStart(2, '0')}`;
+      const todayKey = getTodayDateKey();
+      if (!activeFocusDateKey || !activeFocusDateKey.startsWith(ymPrefix)) {
+        if (todayKey.startsWith(ymPrefix)) {
+          activeFocusDateKey = todayKey;
+        } else {
+          activeFocusDateKey = `${ymPrefix}-01`;
+        }
+      }
+    }
+
+    function renderDailyWageCard() {
+      ensureFocusDateInCurrentMonth();
+      const [y, m, d] = activeFocusDateKey.split('-').map(Number);
+      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const dow = weekdays[new Date(y, m - 1, d).getDay()];
+      const isToday = activeFocusDateKey === getTodayDateKey();
+
+      const wageInfo = getDailyBaseWageForMonth(y, m);
+      const entry = appState.trades[activeFocusDateKey] || { pnl: 0, memo: '', isHoliday: false };
+      const isHoliday = Boolean(entry.isHoliday);
+      const mult = getEffectiveTaxMultiplier();
+      const rawPnl = Number(entry.pnl) || 0;
+      const tradePnl = rawPnl > 0 ? Math.round(rawPnl * mult) : rawPnl;
+
+      const baseWageToday = isHoliday ? 0 : wageInfo.dailyWage;
+      const combinedTotal = baseWageToday + tradePnl;
+
+      // Title
+      document.getElementById('focusDateLabel').textContent =
+        `${isToday ? '今日 ' : ''}${m}月${d}日(${dow}) のリアル日給収支`;
+
+      // Quick Workday / Holiday Toggle Button
+      const toggleBtn = document.getElementById('btnQuickHolidayToggle');
+      if (isHoliday) {
+        toggleBtn.innerHTML = '🏖️ 休日 (日給¥0)';
+        toggleBtn.className = 'px-2 py-0.5 rounded-lg text-[10px] font-black border bg-amber-500/20 border-amber-400 text-amber-300 transition active:scale-95';
+      } else {
+        toggleBtn.innerHTML = `💼 出勤 (${formatJPY(wageInfo.dailyWage)})`;
+        toggleBtn.className = 'px-2 py-0.5 rounded-lg text-[10px] font-black border bg-sky-500/20 border-sky-400 text-sky-300 transition active:scale-95';
+      }
+
+      // Formula & Big Total
+      const formulaEl = document.getElementById('dailyWageFormulaText');
+      const bigTotalEl = document.getElementById('dailyWageTotalBig');
+      const subInfoEl = document.getElementById('dailyWageSubInfo');
+
+      const pnlColorClass = tradePnl > 0 ? 'text-emerald-400' : tradePnl < 0 ? 'text-rose-400' : 'text-slate-300';
+      const pnlSignStr = formatJPY(tradePnl, true);
+
+      if (isHoliday) {
+        formulaEl.innerHTML = `休日 <span class="text-amber-300 font-extrabold">(日給¥0)</span> ＋ トレード <span class="${pnlColorClass} font-extrabold">${pnlSignStr}</span> ＝`;
+      } else {
+        formulaEl.innerHTML = `今日の日給 <span class="text-sky-300 font-extrabold">${formatJPY(wageInfo.dailyWage)}</span> ＋ トレード <span class="${pnlColorClass} font-extrabold">${pnlSignStr}</span> ＝`;
+      }
+
+      bigTotalEl.textContent = `${formatJPY(combinedTotal, combinedTotal > 0)}！`;
+      bigTotalEl.className = `text-3xl font-black tracking-tight ${
+        combinedTotal > wageInfo.dailyWage ? 'text-emerald-400' : combinedTotal > 0 ? 'text-white' : combinedTotal === 0 ? 'text-slate-200' : 'text-rose-400'
+      }`;
+
+      subInfoEl.textContent = appState.privacyMask
+        ? `(${m}月は${wageInfo.daysInMonth}日間・月${wageInfo.holidays}日休み＝${wageInfo.workDays}日出勤)`
+        : `(${m}月は${wageInfo.daysInMonth}日間・月${wageInfo.holidays}日休み＝${wageInfo.workDays}日出勤 / 手取り${(wageInfo.takeHome/10000)}万÷${wageInfo.workDays}日＝日給${formatJPY(wageInfo.dailyWage)})`;
+
+      // Motivational Message Logic
+      const msgIcon = document.getElementById('dailyWageMsgIcon');
+      const msgText = document.getElementById('dailyWageMsgText');
+
+      if (isHoliday) {
+        if (tradePnl > 0) {
+          msgIcon.textContent = '🎉';
+          msgText.textContent = `休日で日給0円のはずなのに ${formatJPY(tradePnl, true)}！最高の臨時ボーナス獲得🔥`;
+        } else if (tradePnl < 0) {
+          msgIcon.textContent = '🍔';
+          msgText.textContent = `休日はリフレッシュ最優先！深追いせずチャートを閉じて美味しいものでも食べよう✨`;
+        } else {
+          msgIcon.textContent = '🏖️';
+          msgText.textContent = `今日はお休み！ノーポジは最高のポジション。ゆっくり休んで英気を養おう💤`;
+        }
+      } else {
+        if (tradePnl > 0) {
+          msgIcon.textContent = '🚀';
+          msgText.textContent = `本業日給${formatJPY(wageInfo.dailyWage)}にプラス上乗せ！今日の日給は ${formatJPY(combinedTotal)} に大幅パワーアップ🔥`;
+        } else if (tradePnl < 0 && combinedTotal >= 0) {
+          msgIcon.textContent = '🛡️';
+          msgText.textContent = `トレードは惜しかったけど本業日給がカバー！今日トータルは ${formatJPY(combinedTotal, true)} のプラス圏確保✨`;
+        } else if (tradePnl < 0 && combinedTotal < 0) {
+          msgIcon.textContent = '☕';
+          msgText.textContent = `今日は授業料！明日も本業で確実に${formatJPY(wageInfo.dailyWage)}稼げるから、熱くならずロットを落として休もう🍀`;
+        } else {
+          msgIcon.textContent = '💼';
+          msgText.textContent = `本業お疲れさま！無理にエントリーしなくても今日の日給 ${formatJPY(wageInfo.dailyWage)} が着実に積み上がってるよ✨`;
+        }
+      }
+    }
+
+    function toggleFocusDateHoliday() {
+      ensureFocusDateInCurrentMonth();
+      const existing = appState.trades[activeFocusDateKey] || { pnl: 0, memo: '', isHoliday: false };
+      existing.isHoliday = !existing.isHoliday;
+      if (existing.pnl === 0 && (!existing.memo || existing.memo === '') && !existing.isHoliday) {
+        delete appState.trades[activeFocusDateKey];
+      } else {
+        appState.trades[activeFocusDateKey] = existing;
+      }
+      saveState();
+      renderCalendarAndStats();
+      showToast(existing.isHoliday ? '🏖️ 休日(日給0円)に切り替えました' : '💼 出勤日に切り替えました');
+    }
+
+    function openWageSettingModal() {
+      document.getElementById('inputMonthlyTakeHome').value = appState.workSettings?.monthlyTakeHome || 300000;
+      document.getElementById('inputMonthlyHolidays').value = appState.workSettings?.monthlyHolidays ?? 6;
+      document.getElementById('wageSettingModal').classList.remove('hidden');
+    }
+
+    function closeWageSettingModal() {
+      document.getElementById('wageSettingModal').classList.add('hidden');
+    }
+
+    function saveWageSettings() {
+      const takeHome = Math.max(10000, Number(document.getElementById('inputMonthlyTakeHome').value) || 300000);
+      const holidays = Math.max(0, Math.min(27, Number(document.getElementById('inputMonthlyHolidays').value) ?? 6));
+      appState.workSettings = { monthlyTakeHome: takeHome, monthlyHolidays: holidays };
+      saveState();
+      closeWageSettingModal();
+      renderCalendarAndStats();
+      showToast('本業月給・休日数の設定を更新しました！');
+    }
+
     function changeMonth(delta) {
       appState.currentMonth += delta;
       if (appState.currentMonth > 12) {
@@ -1267,6 +1526,7 @@ function doGet() {
       const year = appState.currentYear;
       const month = appState.currentMonth;
       const mult = getEffectiveTaxMultiplier();
+      const wageInfo = getDailyBaseWageForMonth(year, month);
 
       document.getElementById('targetYearLabel').textContent = year;
       document.getElementById('currentMonthLabel').textContent = `${year}年 ${month}月`;
@@ -1276,6 +1536,7 @@ function doGet() {
       let monthlyGross = 0;
       let winCount = 0, lossCount = 0;
       let grossProfitSum = 0, grossLossSum = 0;
+      let holidayCountInMonth = 0;
       const monthEntries = [];
 
       const ymPrefix = `${year}-${String(month).padStart(2, '0')}`;
@@ -1285,12 +1546,14 @@ function doGet() {
         const entry = appState.trades[dateKey];
         if (!entry) return;
         const pnl = Number(entry.pnl) || 0;
+        const isHol = Boolean(entry.isHoliday);
 
         if (dateKey.startsWith(yPrefix)) {
           annualGross += pnl;
         }
         if (dateKey.startsWith(ymPrefix)) {
           monthlyGross += pnl;
+          if (isHol) holidayCountInMonth++;
           if (pnl > 0) {
             winCount++;
             grossProfitSum += pnl;
@@ -1298,11 +1561,17 @@ function doGet() {
             lossCount++;
             grossLossSum += Math.abs(pnl);
           }
-          if (pnl !== 0 || (entry.memo && entry.memo.trim() !== '')) {
-            monthEntries.push({ dateKey, pnl, memo: entry.memo || '' });
+          if (pnl !== 0 || (entry.memo && entry.memo.trim() !== '') || isHol) {
+            monthEntries.push({ dateKey, pnl, memo: entry.memo || '', isHoliday: isHol });
           }
         }
       });
+
+      document.getElementById('monthHolidayCountBadge').textContent =
+        `休日 ${holidayCountInMonth}/${wageInfo.holidays}日`;
+
+      // Render Today/Focused Date Daily Wage Card
+      renderDailyWageCard();
 
       const displayAnnual = annualGross > 0 ? annualGross * mult : annualGross;
       const displayMonthly = monthlyGross > 0 ? monthlyGross * mult : monthlyGross;
@@ -1357,6 +1626,8 @@ function doGet() {
         const rawPnl = entry ? Number(entry.pnl) || 0 : 0;
         const adjPnl = rawPnl > 0 ? rawPnl * mult : rawPnl;
         const hasMemo = entry && entry.memo && entry.memo.trim().length > 0;
+        const isHoliday = Boolean(entry && entry.isHoliday);
+        const isFocused = dateKey === activeFocusDateKey;
 
         let cardStyle = 'bg-slate-800/60 border-slate-700/60 text-slate-300 hover:border-slate-500';
         let pnlColor = 'text-slate-400';
@@ -1367,19 +1638,30 @@ function doGet() {
         } else if (rawPnl < 0) {
           cardStyle = 'bg-rose-950/60 border-rose-500/50 text-rose-200 hover:border-rose-400';
           pnlColor = 'text-rose-400';
+        } else if (isHoliday) {
+          cardStyle = 'bg-amber-950/30 border-amber-500/40 text-amber-200 hover:border-amber-400';
         }
 
+        const focusRing = isFocused ? 'ring-2 ring-orange-400' : '';
+
         const cell = document.createElement('button');
-        cell.className = `h-14 rounded-xl border p-1 flex flex-col justify-between items-center relative active:scale-95 transition ${cardStyle}`;
-        cell.onclick = () => openDayModal(dateKey, d);
+        cell.className = `h-14 rounded-xl border p-1 flex flex-col justify-between items-center relative active:scale-95 transition ${cardStyle} ${focusRing}`;
+        cell.onclick = () => {
+          activeFocusDateKey = dateKey;
+          openDayModal(dateKey, d);
+          renderCalendarAndStats();
+        };
 
         cell.innerHTML = `
           <div class="w-full flex items-center justify-between px-0.5">
-            <span class="text-[10px] font-bold leading-none">${d}</span>
-            ${hasMemo ? '<span class="w-1.5 h-1.5 rounded-full bg-orange-400" title="メモあり"></span>' : ''}
+            <span class="text-[10px] font-bold leading-none ${isHoliday ? 'text-amber-300' : ''}">${d}</span>
+            <div class="flex items-center gap-0.5">
+              ${isHoliday ? '<span class="text-[8px] bg-amber-500/30 text-amber-300 border border-amber-500/50 px-1 rounded leading-tight font-black">休</span>' : ''}
+              ${hasMemo ? '<span class="w-1.5 h-1.5 rounded-full bg-orange-400" title="メモあり"></span>' : ''}
+            </div>
           </div>
           <div class="text-[10px] font-extrabold tracking-tighter truncate w-full text-center ${pnlColor}">
-            ${rawPnl !== 0 ? formatCompactJPY(adjPnl) : (hasMemo ? '📝' : '-')}
+            ${rawPnl !== 0 ? formatCompactJPY(adjPnl) : (hasMemo ? '📝' : (isHoliday ? '🏖️' : '-'))}
           </div>
           <div class="h-0.5"></div>
         `;
@@ -1395,10 +1677,11 @@ function doGet() {
           const adj = item.pnl > 0 ? item.pnl * mult : item.pnl;
           const badgeCls = item.pnl > 0 ? 'text-emerald-400 bg-emerald-950/80 border-emerald-500/30' : item.pnl < 0 ? 'text-rose-400 bg-rose-950/80 border-rose-500/30' : 'text-slate-300 bg-slate-800 border-slate-700';
           return `
-            <div onclick="openDayModal('${item.dateKey}')" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 rounded-xl p-2.5 flex items-start justify-between gap-2 transition">
+            <div onclick="activeFocusDateKey='${item.dateKey}'; openDayModal('${item.dateKey}'); renderCalendarAndStats();" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 rounded-xl p-2.5 flex items-start justify-between gap-2 transition">
               <div class="min-w-0">
                 <div class="flex items-center gap-2">
                   <span class="text-xs font-bold text-slate-300">${item.dateKey.slice(5).replace('-', '/')}</span>
+                  ${item.isHoliday ? '<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-1.5 py-0.2 rounded font-bold">🏖️休日</span>' : '<span class="text-[10px] bg-sky-500/15 text-sky-300 px-1.5 py-0.2 rounded font-bold">💼出勤</span>'}
                   <span class="text-xs font-extrabold px-2 py-0.5 rounded-md border ${badgeCls}">${formatJPY(adj, true)}</span>
                 </div>
                 ${item.memo ? `<p class="text-xs text-slate-300 mt-1 break-words">${escapeHtml(item.memo)}</p>` : ''}
@@ -1751,15 +2034,53 @@ function doGet() {
 
     function openDayModal(dateKey, dayNum) {
       selectedDateKey = dateKey;
+      activeFocusDateKey = dateKey;
       const [y, m, d] = dateKey.split('-').map(Number);
       const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
       const dow = weekdays[new Date(y, m - 1, d).getDay()];
       document.getElementById('modalDateTitle').textContent = `${y}年${m}月${d}日 (${dow})`;
 
-      const existing = appState.trades[dateKey] || { pnl: '', memo: '' };
+      const wageInfo = getDailyBaseWageForMonth(y, m);
+      document.getElementById('lblModalWorkWage').textContent = `(+${formatJPY(wageInfo.dailyWage)})`;
+
+      const existing = appState.trades[dateKey] || { pnl: '', memo: '', isHoliday: false };
       document.getElementById('modalPnLInput').value = existing.pnl !== undefined && existing.pnl !== 0 ? existing.pnl : '';
       document.getElementById('modalMemoInput').value = existing.memo || '';
+      setModalHolidayState(Boolean(existing.isHoliday));
       document.getElementById('dayEntryModal').classList.remove('hidden');
+    }
+
+    function setModalHolidayState(isHol) {
+      modalIsHolidayTemp = Boolean(isHol);
+      const btnWork = document.getElementById('btnModalWorkday');
+      const btnHol = document.getElementById('btnModalHoliday');
+
+      if (modalIsHolidayTemp) {
+        btnHol.className = 'py-2 px-3 rounded-xl border text-xs font-black flex items-center justify-center gap-1.5 bg-amber-500/25 border-amber-400 text-amber-200 shadow-sm transition';
+        btnWork.className = 'py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 bg-slate-800/80 border-slate-700 text-slate-400 transition';
+      } else {
+        btnWork.className = 'py-2 px-3 rounded-xl border text-xs font-black flex items-center justify-center gap-1.5 bg-sky-500/25 border-sky-400 text-sky-200 shadow-sm transition';
+        btnHol.className = 'py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 bg-slate-800/80 border-slate-700 text-slate-400 transition';
+      }
+      updateModalLiveWagePreview();
+    }
+
+    function updateModalLiveWagePreview() {
+      if (!selectedDateKey) return;
+      const [y, m] = selectedDateKey.split('-').map(Number);
+      const wageInfo = getDailyBaseWageForMonth(y, m);
+      const pnlVal = Number(document.getElementById('modalPnLInput').value) || 0;
+      const baseWage = modalIsHolidayTemp ? 0 : wageInfo.dailyWage;
+      const total = baseWage + pnlVal;
+      const box = document.getElementById('modalWagePreviewBox');
+
+      if (modalIsHolidayTemp) {
+        box.textContent = pnlVal > 0
+          ? `🏖️ 休日で日給0円のはずなのに ${formatJPY(pnlVal, true)}！`
+          : `🏖️ 休日 (日給¥0) ＋ トレード ${formatJPY(pnlVal, true)} ＝ ${formatJPY(total, total > 0)}`;
+      } else {
+        box.textContent = `💼 今日の日給 ${formatJPY(baseWage)} ＋ トレード ${formatJPY(pnlVal, true)} ＝ ${formatJPY(total, total > 0)}！`;
+      }
     }
 
     function closeDayModal() {
@@ -1770,26 +2091,29 @@ function doGet() {
       const input = document.getElementById('modalPnLInput');
       const current = Number(input.value) || 0;
       input.value = current + delta;
+      updateModalLiveWagePreview();
     }
 
     function setModalPnL(val) {
       document.getElementById('modalPnLInput').value = val === 0 ? '' : val;
+      updateModalLiveWagePreview();
     }
 
     function saveDayEntry() {
       if (!selectedDateKey) return;
       const pnlVal = Number(document.getElementById('modalPnLInput').value) || 0;
       const memoVal = document.getElementById('modalMemoInput').value.trim();
+      const isHol = Boolean(modalIsHolidayTemp);
 
-      if (pnlVal === 0 && memoVal === '') {
+      if (pnlVal === 0 && memoVal === '' && !isHol) {
         delete appState.trades[selectedDateKey];
       } else {
-        appState.trades[selectedDateKey] = { pnl: pnlVal, memo: memoVal };
+        appState.trades[selectedDateKey] = { pnl: pnlVal, memo: memoVal, isHoliday: isHol };
       }
       saveState();
       closeDayModal();
       renderCalendarAndStats();
-      showToast('収支・メモを保存しました！');
+      showToast('収支・休日設定を保存しました！');
     }
 
     function deleteDayEntry() {
@@ -2393,3 +2717,4 @@ function doGet() {
   </script>
 </body>
 </html>
+```
