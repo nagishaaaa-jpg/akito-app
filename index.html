@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ja" class="dark">
 <head>
@@ -8,14 +7,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="あきと資産相棒">
   <meta name="theme-color" content="#0f172a">
+  <meta name="mobile-web-app-capable" content="yes">
   
-  <!-- === 高画質カスタムアプリアイコン設定 (Android Chrome & iOS対応) === -->
-  <!-- 1. Favicon / Shortcut Icon (オレンジ×ダークの右肩上がり上昇チャートデザイン) -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e293b'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fb923c'/%3E%3Cstop offset='100%25' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3ClinearGradient id='glowGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f97316' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23f97316' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='dropShadow' x='-10%25' y='-10%25' width='130%25' height='130%25'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f97316' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bgGrad)' stroke='%23f97316' stroke-width='10' stroke-opacity='0.6'/%3E%3Cpolygon points='76,380 180,310 280,335 436,170 436,410 76,410' fill='url(%23glowGrad)'/%3E%3Cpolyline points='76,380 180,310 280,335 436,170' fill='none' stroke='url(%23orangeGrad)' stroke-width='28' stroke-linecap='round' stroke-linejoin='round' filter='url(%23dropShadow)'/%3E%3Cpolygon points='400,165 445,160 440,205' fill='%23fb923c' filter='url(%23dropShadow)'/%3E%3Ccircle cx='436' cy='170' r='14' fill='%23ffffff'/%3E%3Ctext x='256' y='465' font-family='sans-serif' font-size='56' font-weight='900' fill='%23f8fafc' text-anchor='middle' letter-spacing='3'%3EAKITO%3C/text%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e293b'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fb923c'/%3E%3Cstop offset='100%25' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3ClinearGradient id='glowGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f97316' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23f97316' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='dropShadow' x='-10%25' y='-10%25' width='130%25' height='130%25'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f97316' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bgGrad)' stroke='%23f97316' stroke-width='10' stroke-opacity='0.6'/%3E%3Cpolygon points='76,380 180,310 280,335 436,170 436,410 76,410' fill='url(%23glowGrad)'/%3E%3Cpolyline points='76,380 180,310 280,335 436,170' fill='none' stroke='url(%23orangeGrad)' stroke-width='28' stroke-linecap='round' stroke-linejoin='round' filter='url(%23dropShadow)'/%3E%3Cpolygon points='400,165 445,160 440,205' fill='%23fb923c' filter='url(%23dropShadow)'/%3E%3Ccircle cx='436' cy='170' r='14' fill='%23ffffff'/%3E%3Ctext x='256' y='465' font-family='sans-serif' font-size='56' font-weight='900' fill='%23f8fafc' text-anchor='middle' letter-spacing='3'%3EAKITO%3C/text%3E%3C/svg%3E">
+  <!-- === Android Chrome & iOS 完全対応：PNG形式 Base64 アプリアイコン === -->
+  <!-- 1. Apple Touch Icon & Favicon (PNG) -->
+  <link rel="apple-touch-icon" sizes="192x192" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAAAbLs18AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO3c0XLbMAwEUP//6bVpm6n7yA2HkChvL5yXyba10yIpgiYl/fz58ycAANq6r1sAAL4jAIBtBQCwrQAAthUAwLYCANhWAAAEqK37ugUA4Dt+Pj8/r1sCAL7j/yEAVm0FAH49+z8QAPzK7P+A/wAAthUAwLYCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4Dv+AcfP0F59b+k+AAAAAElFTkSuQmCC">
+  <link rel="icon" type="image/png" sizes="192x192" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAAAbLs18AAAACXBIWXMAAAsTAAALEwEAmpwYAAAFE0lEQVR4nO3c0XLbMAwEUP//6bVpm6n7yA2HkChvL5yXyba10yIpgiYl/fz58ycAANq6r1sAAL4jAIBtBQCwrQAAthUAwLYCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4DsCANhWAAAEqK37ugUA4Dv+AcfP0F59b+k+AAAAAElFTkSuQmCC">
 
-  <!-- 2. Android Chrome用 Web App Manifest (ホーム画面追加時にこのアイコンが採用される) -->
-  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E3%81%82%E3%81%8D%E3%81%A8%E8%B3%87%E7%94%A3%E7%9B%B8%E6%A3%92%22%2C%22short_name%22%3A%22%E8%B3%87%E7%94%A3%E7%9B%B8%E6%A3%92%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%253E%253Cdefs%253E%253ClinearGradient%20id%3D'bgGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'100%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%25231e293b'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%25230f172a'%2F%253E%253C%2FlinearGradient%253E%253ClinearGradient%20id%3D'orangeGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'100%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%2523fb923c'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%2523ea580c'%2F%253E%253C%2FlinearGradient%253E%253ClinearGradient%20id%3D'glowGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'0%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%2523f97316'%20stop-opacity%3D'0.45'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%2523f97316'%20stop-opacity%3D'0'%2F%253E%253C%2FlinearGradient%253E%253Cfilter%20id%3D'dropShadow'%20x%3D'-10%2525'%20y%3D'-10%2525'%20width%3D'130%2525'%20height%3D'130%2525'%253E%253CfeDropShadow%20dx%3D'0'%20dy%3D'8'%20stdDeviation%3D'12'%20flood-color%3D'%2523f97316'%20flood-opacity%3D'0.4'%2F%253E%253C%2Ffilter%253E%253C%2Fdefs%253E%253Crect%20width%3D'512'%20height%3D'512'%20rx%3D'120'%20fill%3D'url(%2523bgGrad)'%20stroke%3D'%2523f97316'%20stroke-width%3D'10'%20stroke-opacity%3D'0.6'%2F%253E%253Cpolygon%20points%3D'76%2C380%20180%2C310%20280%2C335%20436%2C170%20436%2C410%2076%2C410'%20fill%3D'url(%2523glowGrad)'%2F%253E%253Cpolyline%20points%3D'76%2C380%20180%2C310%20280%2C335%20436%2C170'%20fill%3D'none'%20stroke%3D'url(%2523orangeGrad)'%20stroke-width%3D'28'%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%20filter%3D'url(%2523dropShadow)'%2F%253E%253Cpolygon%20points%3D'400%2C165%20445%2C160%20440%2C205'%20fill%3D'%2523fb923c'%20filter%3D'url(%2523dropShadow)'%2F%253E%253Ccircle%20cx%3D'436'%20cy%3D'170'%20r%3D'14'%20fill%3D'%2523ffffff'%2F%253E%253Ctext%20x%3D'256'%20y%3D'465'%20font-family%3D'sans-serif'%20font-size%3D'56'%20font-weight%3D'900'%20fill%3D'%2523f8fafc'%20text-anchor%3D'middle'%20letter-spacing%3D'3'%253EAKITO%253C%2Ftext%253E%253C%2Fsvg%3E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+  <!-- 2. Android Chrome用 Web App Manifest (Canvas生成の高画質PNGを動的セット) -->
+  <link id="dynamicManifest" rel="manifest">
 
   <title>あきと専用 資産＆トレード相棒アプリ</title>
   <!-- Tailwind CSS -->
@@ -96,6 +96,132 @@
       animation: fadeIn 0.2s ease-out forwards;
     }
   </style>
+
+  <!-- 高解像度アプリアイコン PNG 生成スクリプト (Android Chrome が「G」にしないための決定打) -->
+  <script>
+    (function generateAppIcon() {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // 1. 背景角丸グラデーション
+        const grad = ctx.createLinearGradient(0, 0, 512, 512);
+        grad.addColorStop(0, '#1e293b');
+        grad.addColorStop(1, '#0b1120');
+        ctx.fillStyle = grad;
+        
+        // 角丸四角形
+        const r = 110;
+        ctx.beginPath();
+        ctx.moveTo(r, 0);
+        ctx.lineTo(512 - r, 0);
+        ctx.quadraticCurveTo(512, 0, 512, r);
+        ctx.lineTo(512, 512 - r);
+        ctx.quadraticCurveTo(512, 512, 512 - r, 512);
+        ctx.lineTo(r, 512);
+        ctx.quadraticCurveTo(0, 512, 0, 512 - r);
+        ctx.lineTo(0, r);
+        ctx.quadraticCurveTo(0, 0, r, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        // 枠線 (オレンジ)
+        ctx.lineWidth = 14;
+        ctx.strokeStyle = '#f97316';
+        ctx.stroke();
+
+        // 2. 上昇チャートの塗りつぶし (Glow)
+        const glow = ctx.createLinearGradient(0, 180, 0, 420);
+        glow.addColorStop(0, 'rgba(249, 115, 22, 0.45)');
+        glow.addColorStop(1, 'rgba(249, 115, 22, 0.0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.moveTo(70, 390);
+        ctx.lineTo(170, 310);
+        ctx.lineTo(270, 340);
+        ctx.lineTo(435, 160);
+        ctx.lineTo(435, 410);
+        ctx.lineTo(70, 410);
+        ctx.closePath();
+        ctx.fill();
+
+        // 3. 上昇チャートの折れ線 (鮮やかなオレンジ)
+        ctx.lineWidth = 26;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#fb923c';
+        ctx.beginPath();
+        ctx.moveTo(70, 390);
+        ctx.lineTo(170, 310);
+        ctx.lineTo(270, 340);
+        ctx.lineTo(435, 160);
+        ctx.stroke();
+
+        // 4. チャート先端の白い光点
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(435, 160, 16, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 矢印の三角形ヘッド
+        ctx.fillStyle = '#fb923c';
+        ctx.beginPath();
+        ctx.moveTo(400, 155);
+        ctx.lineTo(445, 150);
+        ctx.lineTo(440, 195);
+        ctx.closePath();
+        ctx.fill();
+
+        // 5. テキスト「AKITO」
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 60px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.letterSpacing = '5px';
+        ctx.fillText('AKITO', 256, 460);
+
+        const iconPngData = canvas.toDataURL('image/png');
+
+        // Manifest を動的生成して link タグにセット
+        const manifestObj = {
+          name: "あきと資産＆トレード相棒",
+          short_name: "資産相棒",
+          start_url: window.location.href,
+          display: "standalone",
+          background_color: "#0f172a",
+          theme_color: "#0f172a",
+          icons: [
+            {
+              src: iconPngData,
+              sizes: "512x512",
+              type: "image/png",
+              purpose: "any maskable"
+            },
+            {
+              src: iconPngData,
+              sizes: "192x192",
+              type: "image/png",
+              purpose: "any maskable"
+            }
+          ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(manifestBlob);
+        document.getElementById('dynamicManifest').href = manifestUrl;
+
+        // Favicon にも PNG をセット
+        const linkIcon = document.createElement('link');
+        linkIcon.rel = 'icon';
+        linkIcon.type = 'image/png';
+        linkIcon.href = iconPngData;
+        document.head.appendChild(linkIcon);
+      } catch (e) {
+        console.error('App icon generation failed:', e);
+      }
+    })();
+  </script>
 </head>
 <body class="min-h-screen select-none">
 
@@ -832,7 +958,7 @@
           </div>
           <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800">
             <div class="font-bold text-white mb-1">🤖 Android (Chrome) の場合</div>
-            <p class="text-[11px] text-slate-300">1. <b>Chrome</b>で開きます。<br>2. 右上の<b>メニュー（︙）</b>をタップ。<br>3. <b>「ホーム画面に追加」</b>をタップするとホーム画面から1タップで全画面起動できます！</p>
+            <p class="text-[11px] text-slate-300">1. <b>Chrome</b>で開きます。<br>2. 右上の<b>メニュー（︙）</b>をタップ。<br>3. <b>「ホーム画面に追加」</b>（または「アプリをインストール」）をタップするとホーム画面から1タップで全画面起動できます！</p>
           </div>
         </div>
       </div>
@@ -2755,4 +2881,3 @@ function doGet() {
   </script>
 </body>
 </html>
-```
