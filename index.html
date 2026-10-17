@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ja" class="dark">
 <head>
@@ -7,6 +8,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="あきと資産相棒">
   <meta name="theme-color" content="#0f172a">
+  
+  <!-- === 高画質カスタムアプリアイコン設定 (Android Chrome & iOS対応) === -->
+  <!-- 1. Favicon / Shortcut Icon (オレンジ×ダークの右肩上がり上昇チャートデザイン) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e293b'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fb923c'/%3E%3Cstop offset='100%25' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3ClinearGradient id='glowGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f97316' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23f97316' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='dropShadow' x='-10%25' y='-10%25' width='130%25' height='130%25'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f97316' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bgGrad)' stroke='%23f97316' stroke-width='10' stroke-opacity='0.6'/%3E%3Cpolygon points='76,380 180,310 280,335 436,170 436,410 76,410' fill='url(%23glowGrad)'/%3E%3Cpolyline points='76,380 180,310 280,335 436,170' fill='none' stroke='url(%23orangeGrad)' stroke-width='28' stroke-linecap='round' stroke-linejoin='round' filter='url(%23dropShadow)'/%3E%3Cpolygon points='400,165 445,160 440,205' fill='%23fb923c' filter='url(%23dropShadow)'/%3E%3Ccircle cx='436' cy='170' r='14' fill='%23ffffff'/%3E%3Ctext x='256' y='465' font-family='sans-serif' font-size='56' font-weight='900' fill='%23f8fafc' text-anchor='middle' letter-spacing='3'%3EAKITO%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cdefs%3E%3ClinearGradient id='bgGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%231e293b'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3ClinearGradient id='orangeGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fb923c'/%3E%3Cstop offset='100%25' stop-color='%23ea580c'/%3E%3C/linearGradient%3E%3ClinearGradient id='glowGrad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23f97316' stop-opacity='0.45'/%3E%3Cstop offset='100%25' stop-color='%23f97316' stop-opacity='0'/%3E%3C/linearGradient%3E%3Cfilter id='dropShadow' x='-10%25' y='-10%25' width='130%25' height='130%25'%3E%3CfeDropShadow dx='0' dy='8' stdDeviation='12' flood-color='%23f97316' flood-opacity='0.4'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='512' height='512' rx='120' fill='url(%23bgGrad)' stroke='%23f97316' stroke-width='10' stroke-opacity='0.6'/%3E%3Cpolygon points='76,380 180,310 280,335 436,170 436,410 76,410' fill='url(%23glowGrad)'/%3E%3Cpolyline points='76,380 180,310 280,335 436,170' fill='none' stroke='url(%23orangeGrad)' stroke-width='28' stroke-linecap='round' stroke-linejoin='round' filter='url(%23dropShadow)'/%3E%3Cpolygon points='400,165 445,160 440,205' fill='%23fb923c' filter='url(%23dropShadow)'/%3E%3Ccircle cx='436' cy='170' r='14' fill='%23ffffff'/%3E%3Ctext x='256' y='465' font-family='sans-serif' font-size='56' font-weight='900' fill='%23f8fafc' text-anchor='middle' letter-spacing='3'%3EAKITO%3C/text%3E%3C/svg%3E">
+
+  <!-- 2. Android Chrome用 Web App Manifest (ホーム画面追加時にこのアイコンが採用される) -->
+  <link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%E3%81%82%E3%81%8D%E3%81%A8%E8%B3%87%E7%94%A3%E7%9B%B8%E6%A3%92%22%2C%22short_name%22%3A%22%E8%B3%87%E7%94%A3%E7%9B%B8%E6%A3%92%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%230f172a%22%2C%22theme_color%22%3A%22%230f172a%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage%2Fsvg%2Bxml%2C%253Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%20512%20512'%253E%253Cdefs%253E%253ClinearGradient%20id%3D'bgGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'100%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%25231e293b'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%25230f172a'%2F%253E%253C%2FlinearGradient%253E%253ClinearGradient%20id%3D'orangeGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'100%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%2523fb923c'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%2523ea580c'%2F%253E%253C%2FlinearGradient%253E%253ClinearGradient%20id%3D'glowGrad'%20x1%3D'0%2525'%20y1%3D'0%2525'%20x2%3D'0%2525'%20y2%3D'100%2525'%253E%253Cstop%20offset%3D'0%2525'%20stop-color%3D'%2523f97316'%20stop-opacity%3D'0.45'%2F%253E%253Cstop%20offset%3D'100%2525'%20stop-color%3D'%2523f97316'%20stop-opacity%3D'0'%2F%253E%253C%2FlinearGradient%253E%253Cfilter%20id%3D'dropShadow'%20x%3D'-10%2525'%20y%3D'-10%2525'%20width%3D'130%2525'%20height%3D'130%2525'%253E%253CfeDropShadow%20dx%3D'0'%20dy%3D'8'%20stdDeviation%3D'12'%20flood-color%3D'%2523f97316'%20flood-opacity%3D'0.4'%2F%253E%253C%2Ffilter%253E%253C%2Fdefs%253E%253Crect%20width%3D'512'%20height%3D'512'%20rx%3D'120'%20fill%3D'url(%2523bgGrad)'%20stroke%3D'%2523f97316'%20stroke-width%3D'10'%20stroke-opacity%3D'0.6'%2F%253E%253Cpolygon%20points%3D'76%2C380%20180%2C310%20280%2C335%20436%2C170%20436%2C410%2076%2C410'%20fill%3D'url(%2523glowGrad)'%2F%253E%253Cpolyline%20points%3D'76%2C380%20180%2C310%20280%2C335%20436%2C170'%20fill%3D'none'%20stroke%3D'url(%2523orangeGrad)'%20stroke-width%3D'28'%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%20filter%3D'url(%2523dropShadow)'%2F%253E%253Cpolygon%20points%3D'400%2C165%20445%2C160%20440%2C205'%20fill%3D'%2523fb923c'%20filter%3D'url(%2523dropShadow)'%2F%253E%253Ccircle%20cx%3D'436'%20cy%3D'170'%20r%3D'14'%20fill%3D'%2523ffffff'%2F%253E%253Ctext%20x%3D'256'%20y%3D'465'%20font-family%3D'sans-serif'%20font-size%3D'56'%20font-weight%3D'900'%20fill%3D'%2523f8fafc'%20text-anchor%3D'middle'%20letter-spacing%3D'3'%253EAKITO%253C%2Ftext%253E%253C%2Fsvg%3E%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fsvg%2Bxml%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+
   <title>あきと専用 資産＆トレード相棒アプリ</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -137,7 +147,7 @@
         <div class="flex items-center justify-between gap-1">
           <div class="flex items-center gap-1.5 min-w-0">
             <span class="text-sm">🔥</span>
-            <span id="focusDateLabel" class="text-xs font-black text-orange-300 truncate">10月17日(土) のリアル日給収支</span>
+            <span id="focusDateLabel" class="text-xs font-black text-orange-300 truncate">今日のリアル日給収支</span>
             <button onclick="openDayModal(activeFocusDateKey)" class="text-[10px] bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded font-bold shrink-0 active:scale-95">収支入力</button>
           </div>
           <div class="flex items-center gap-1 shrink-0">
@@ -190,7 +200,7 @@
         <!-- Monthly Total P&L -->
         <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-center my-2">
           <div class="text-xs text-slate-400 font-medium mb-0.5">
-            今月のトレード収支 <span class="tax-mode-badge text-emerald-400 font-bold">(税引前)</span>
+            今月のトレード収支 <span class="tax-mode-badge text-orange-400 font-bold">(税引前)</span>
           </div>
           <div id="monthlyTotalPnL" class="text-3xl font-black tracking-tight text-slate-100">+¥0</div>
         </div>
@@ -495,7 +505,7 @@
           <div class="flex items-center justify-between">
             <label class="text-xs font-bold text-slate-300">予想する値動き幅 (<span class="unit-label">円</span> / pt)</label>
             <div class="flex items-center gap-1">
-              <input type="number" id="simMoveDistance" value="500" step="any" oninput="syncSimSliderFromInput()" class="w-24 bg-slate-900 border border-orange-500/40 rounded-lg px-2 py-1 text-right text-sm font-black text-white outline-none">
+              <input type="number" id="simMoveDistance" value="500" step="any" oninput="syncSimSliderFromInput()" class="w-24 bg-slate-900 border border-orange-400/50 rounded-lg px-2 py-1 text-right text-sm font-black text-white outline-none">
               <span class="unit-label text-xs text-orange-300 font-bold">円</span>
             </div>
           </div>
@@ -680,18 +690,27 @@
             <h2 class="text-sm font-black text-slate-100">💴 海外証券・来年の税金ざっくり試算</h2>
             <p class="text-[11px] text-slate-400">給与年収と年間トレード利益(雑所得・総合課税)から追加税額を試算</p>
           </div>
-          <span class="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">手取りスイッチ連動</span>
+          <span class="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold shrink-0">手取りスイッチ連動</span>
         </div>
 
         <div class="grid grid-cols-2 gap-2.5">
           <div>
             <label class="block text-xs font-bold text-slate-300 mb-1">🏢 給与年収 (額面・円)</label>
-            <input type="number" id="taxSalaryInput" value="4500000" step="100000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-emerald-400 outline-none">
+            <input type="number" id="taxSalaryInput" value="4500000" step="100000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-orange-400 outline-none">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-300 mb-1">🧾 年間経費 (通信費等・円)</label>
-            <input type="number" id="taxExpenseInput" value="0" step="10000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-emerald-400 outline-none">
+            <div class="flex items-center justify-between mb-1">
+              <label class="text-xs font-bold text-slate-300">🧾 年間経費 (円)</label>
+              <button onclick="clearTaxExpense()" class="text-[10px] text-orange-400 hover:underline font-bold">0に戻す</button>
+            </div>
+            <input type="number" id="taxExpenseInput" value="0" step="10000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-orange-400 outline-none">
           </div>
+        </div>
+
+        <!-- Warning when Expense >= Trade Profit -->
+        <div id="taxExpenseWarning" class="hidden bg-orange-500/15 border border-orange-500/40 rounded-xl px-3 py-2 text-[11px] font-bold text-orange-200 flex items-center justify-between gap-2">
+          <span>⚠️ 経費額が利益額以上になっているため、課税対象の利益が0円（税金¥0）になっています！</span>
+          <button onclick="clearTaxExpense()" class="px-2 py-1 rounded bg-orange-500 text-slate-950 font-black text-[10px] shrink-0">経費を0にする</button>
         </div>
 
         <!-- Trade Profit Source Selector -->
@@ -702,13 +721,24 @@
           </div>
           <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800">
             <span class="text-slate-400">シミュレーション用に任意の利益額で試算する(空欄ならカレンダー連動)</span>
+            <button onclick="clearTaxOverrideProfit()" class="text-[10px] text-slate-400 hover:text-white underline shrink-0 ml-1">クリア</button>
           </div>
-          <input type="number" id="taxOverrideProfitInput" placeholder="カレンダーの数値を自動使用中 (手入力でテスト可)" step="50000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-300 outline-none">
+          <input type="number" id="taxOverrideProfitInput" placeholder="例: 900000 (空欄ならカレンダーの利益を使用)" step="50000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-300 focus:border-orange-400 outline-none">
+          <div class="flex gap-1.5 pt-0.5">
+            <button onclick="setQuickOverrideProfit(300000)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300">利益30万</button>
+            <button onclick="setQuickOverrideProfit(500000)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300">利益50万</button>
+            <button onclick="setQuickOverrideProfit(900000)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-orange-300">利益90万</button>
+            <button onclick="setQuickOverrideProfit(1500000)" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-bold text-slate-300">利益150万</button>
+          </div>
         </div>
 
         <!-- Tax Calculation Output -->
         <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 border border-amber-500/30 rounded-xl p-3.5 space-y-2">
-          <div class="flex items-baseline justify-between">
+          <!-- Calculation Breakdown Formula -->
+          <div id="taxFormulaBreakdown" class="text-[11px] bg-slate-950/70 border border-slate-800 rounded-lg px-2.5 py-1.5 text-slate-300 font-bold text-center">
+            トレード利益 ¥0 － 経費 ¥0 ＝ 課税対象雑所得 ¥0
+          </div>
+          <div class="flex items-baseline justify-between pt-1">
             <span class="text-xs font-bold text-amber-200">来年の追加税金目安 (所得税+住民税10%)</span>
             <span id="taxEstimatedTotal" class="text-2xl font-black text-amber-400">¥0</span>
           </div>
@@ -798,7 +828,7 @@
         <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
           <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800">
             <div class="font-bold text-white mb-1">🍎 iPhone (Safari) の場合</div>
-            <p class="text-[11px] text-slate-300">1. このHTMLファイルを「ファイル」アプリに保存するか、Web上に置いて<b>Safari</b>で開きます。<br>2. 画面下の<b>共有ボタン（四角から上矢印 📤）</b>をタップ。<br>3. メニューから<b>「ホーム画面に追加」</b>を押すと、本物のアプリのようにアイコンが作られます！</p>
+            <p class="text-[11px] text-slate-300">1. Web上に置いたURLを<b>Safari</b>で開きます。<br>2. 画面下の<b>共有ボタン（四角から上矢印 📤）</b>をタップ。<br>3. メニューから<b>「ホーム画面に追加」</b>を押すと、本物のアプリのようにアイコンが作られます！</p>
           </div>
           <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800">
             <div class="font-bold text-white mb-1">🤖 Android (Chrome) の場合</div>
@@ -1371,8 +1401,8 @@ function doGet() {
     function getEffectiveTaxMultiplier() {
       if (appState.taxMode === 'gross') return 1.0;
       const taxInfo = computeTaxNumbers();
-      if (taxInfo.tradeProfit <= 0) return 1.0;
-      const netRatio = Math.max(0.1, (taxInfo.tradeProfit - taxInfo.additionalTax) / taxInfo.tradeProfit);
+      if (taxInfo.rawTradeProfit <= 0) return 1.0;
+      const netRatio = Math.max(0.1, (taxInfo.rawTradeProfit - taxInfo.additionalTax) / taxInfo.rawTradeProfit);
       return netRatio;
     }
 
@@ -1738,7 +1768,6 @@ function doGet() {
       renderInstrumentButtons();
       const info = getActiveInstConfig(instKey);
 
-      // Show or hide USD/JPY quick bar for USD-denominated CFDs (like Nasdaq US100, Gold, Oil)
       const usdBar = document.getElementById('usdJpyQuickBar');
       if (info.currency === 'USD') {
         usdBar.classList.remove('hidden');
@@ -1750,11 +1779,9 @@ function doGet() {
       document.getElementById('quickUsdJpyInput').value = fxRate;
       document.getElementById('inputUsdJpyRate').value = fxRate;
 
-      // Set unit labels
       document.querySelectorAll('.unit-label').forEach(el => el.textContent = info.unit);
       document.getElementById('brokerPresetHint').textContent = info.fullName || info.name;
 
-      // Render quick multiplier preset buttons
       const presetWrap = document.getElementById('quickMultiplierButtons');
       if (info.presets && info.presets.length > 0) {
         presetWrap.innerHTML = info.presets.map(p => `
@@ -1766,17 +1793,14 @@ function doGet() {
         presetWrap.innerHTML = '';
       }
 
-      // Populate config inputs
       document.getElementById('inputContractSize').value = info.contractSize;
       document.getElementById('inputLeverage').value = info.leverage;
       document.getElementById('inputStopOutPct').value = appState.lotCalc.stopOutPct !== undefined ? appState.lotCalc.stopOutPct : 20;
 
-      // Load defaults for price and distance
       document.getElementById('calcCurrentPrice').value = info.defaultPrice;
       document.getElementById('calcEndureDistance').value = info.defaultDistance;
       document.getElementById('calcTargetStopPrice').value = +(info.defaultPrice - info.defaultDistance).toFixed(4);
 
-      // Update slider range for step 2
       const slider = document.getElementById('simMoveSlider');
       slider.max = info.sliderMax || 2000;
       slider.step = info.sliderStep || 10;
@@ -1867,26 +1891,18 @@ function doGet() {
       const stopOutPct = Math.max(0, Number(document.getElementById('inputStopOutPct').value) ?? 20);
       const fxRate = info.currency === 'USD' ? (Number(appState.lotCalc.usdJpy) || 150) : 1;
 
-      // 1 Lot value change in JPY when price moves by 1 unit
       const yenPerUnitPerLot = contractSize * fxRate;
       window._currentYenPerUnitPerLot = yenPerUnitPerLot;
 
-      // Required Margin per 1.00 Lot in JPY: (CurrentPrice * ContractSize * FXRate) / Leverage
       const marginPerOneLot = (curPrice * contractSize * fxRate) / leverage;
-
-      // Loss per 1.00 Lot in JPY when price moves against position by `distance`
       const lossPerOneLot = distance * yenPerUnitPerLot;
 
-      // XM Stop-Out Formula:
-      // Stop-out happens when: Equity - L * lossPerOneLot = (stopOutPct / 100) * L * marginPerOneLot
-      // => L_max = Equity / (lossPerOneLot + (stopOutPct / 100) * marginPerOneLot)
       const stopOutRatio = stopOutPct / 100;
       const costPerLotAtStopOut = lossPerOneLot + (stopOutRatio * marginPerOneLot);
 
       const maxLotRaw = costPerLotAtStopOut > 0 ? (equity / costPerLotAtStopOut) : 0;
       const maxLot = Math.floor(maxLotRaw * 100) / 100;
 
-      // Safe (10% equity risk) and Standard (30% equity risk)
       const safeLot = Math.floor(((equity * 0.10) / lossPerOneLot) * 100) / 100;
       const stdLot = Math.floor(((equity * 0.30) / lossPerOneLot) * 100) / 100;
 
@@ -1922,7 +1938,6 @@ function doGet() {
       document.getElementById('tierMaxLot').textContent = `${maxLot.toFixed(2)} lot`;
       document.getElementById('tierMaxRisk').textContent = formatJPY(-maxAllowableLoss);
 
-      // Sync to simulator below
       document.getElementById('simLotInput').value = maxLot > 0 ? maxLot.toFixed(2) : '0.01';
       updatePnLSimulation();
     }
@@ -2184,7 +2199,6 @@ function doGet() {
           path.setAttribute('stroke-width', '2');
           svg.appendChild(path);
 
-          // Label inside slice if >= 8%
           if (ratio >= 0.08) {
             const midAngle = startAngle + angle / 2;
             const lx = cx + (r * 0.62) * Math.cos(midAngle);
@@ -2217,7 +2231,6 @@ function doGet() {
         });
       }
 
-      // Render Asset List cards
       const listContainer = document.getElementById('portfolioAssetList');
       listContainer.innerHTML = list.map((item, idx) => {
         const val = Number(item.value) || 0;
@@ -2405,31 +2418,21 @@ function doGet() {
       const areaAfter = `${padL},${padT + plotH} ${ptsAfter} ${xPos(years).toFixed(1)},${padT + plotH}`;
 
       svg.innerHTML = `
-        <!-- Grid lines -->
         <line x1="${padL}" y1="${padT}" x2="${w - padR}" y2="${padT}" stroke="#334155" stroke-dasharray="3 3" stroke-width="1"/>
         <line x1="${padL}" y1="${padT + plotH/2}" x2="${w - padR}" y2="${padT + plotH/2}" stroke="#334155" stroke-dasharray="3 3" stroke-width="1"/>
         <line x1="${padL}" y1="${padT + plotH}" x2="${w - padR}" y2="${padT + plotH}" stroke="#475569" stroke-width="1"/>
 
-        <!-- Y-Axis Labels -->
         <text x="${padL - 5}" y="${padT + 4}" text-anchor="end" fill="#94a3b8" font-size="9">${Math.round(maxVal)}万</text>
         <text x="${padL - 5}" y="${padT + plotH/2 + 3}" text-anchor="end" fill="#94a3b8" font-size="9">${Math.round(maxVal/2)}万</text>
         <text x="${padL - 5}" y="${padT + plotH}" text-anchor="end" fill="#94a3b8" font-size="9">0</text>
 
-        <!-- X-Axis Labels -->
         <text x="${padL}" y="${h - 6}" text-anchor="middle" fill="#94a3b8" font-size="9">現在</text>
         <text x="${xPos(Math.round(years/2))}" y="${h - 6}" text-anchor="middle" fill="#94a3b8" font-size="9">${Math.round(years/2)}年後</text>
-        <text x="${w - padR}" y="${h - 6}" text-anchor=" end" fill="#94a3b8" font-size="9">${years}年後</text>
+        <text x="${w - padR}" y="${h - 6}" text-anchor="end" fill="#94a3b8" font-size="9">${years}年後</text>
 
-        <!-- Area under After curve -->
         <polygon points="${areaAfter}" fill="rgba(16, 185, 129, 0.15)"/>
-
-        <!-- Principal Line -->
         <polyline fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 3" points="${ptsPrin}"/>
-
-        <!-- Before Line -->
         <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${ptsBefore}"/>
-
-        <!-- After Line -->
         <polyline fill="none" stroke="#10b981" stroke-width="3" points="${ptsAfter}"/>
       `;
     }
@@ -2505,8 +2508,9 @@ function doGet() {
         }
       });
 
-      const hasOverride = appState.tax.overrideProfit !== '' && appState.tax.overrideProfit !== null && !isNaN(Number(appState.tax.overrideProfit));
-      const rawTradeProfit = hasOverride ? Number(appState.tax.overrideProfit) : calProfit;
+      const ovRaw = String(appState.tax.overrideProfit ?? '').trim();
+      const hasOverride = ovRaw !== '' && !isNaN(Number(ovRaw));
+      const rawTradeProfit = hasOverride ? Number(ovRaw) : calProfit;
       const netMiscIncome = Math.max(0, rawTradeProfit - expense);
 
       const salaryDeduction = calcSalaryDeduction(salary);
@@ -2525,11 +2529,31 @@ function doGet() {
 
       return {
         calProfit,
+        rawTradeProfit,
+        expense,
         tradeProfit: netMiscIncome,
         additionalTax,
         effectiveRate,
         netAfterTax: rawTradeProfit - additionalTax
       };
+    }
+
+    function clearTaxExpense() {
+      document.getElementById('taxExpenseInput').value = 0;
+      saveTaxSettingsAndCalc();
+      showToast('年間経費を 0円 にリセットしました');
+    }
+
+    function clearTaxOverrideProfit() {
+      document.getElementById('taxOverrideProfitInput').value = '';
+      saveTaxSettingsAndCalc();
+      showToast('カレンダーの利益連動に戻しました');
+    }
+
+    function setQuickOverrideProfit(amount) {
+      document.getElementById('taxOverrideProfitInput').value = amount;
+      saveTaxSettingsAndCalc();
+      showToast(`利益 ${formatJPY(amount)} で試算しました`);
     }
 
     function saveTaxSettingsAndCalc() {
@@ -2544,6 +2568,21 @@ function doGet() {
     function calculateTaxEstimate() {
       const info = computeTaxNumbers();
       document.getElementById('taxCalendarProfitText').textContent = formatJPY(info.calProfit, true);
+
+      const formulaEl = document.getElementById('taxFormulaBreakdown');
+      if (formulaEl) {
+        formulaEl.innerHTML = `試算利益 <span class="text-emerald-400">${formatJPY(info.rawTradeProfit)}</span> － 経費 <span class="text-rose-300">${formatJPY(info.expense)}</span> ＝ 課税対象 <span class="text-amber-300">${formatJPY(info.tradeProfit)}</span>`;
+      }
+
+      const warnEl = document.getElementById('taxExpenseWarning');
+      if (warnEl) {
+        if (info.rawTradeProfit > 0 && info.expense >= info.rawTradeProfit) {
+          warnEl.classList.remove('hidden');
+        } else {
+          warnEl.classList.add('hidden');
+        }
+      }
+
       document.getElementById('taxEstimatedTotal').textContent = formatJPY(info.additionalTax);
       document.getElementById('taxEffectiveRate').textContent = `${info.effectiveRate.toFixed(1)}%`;
       document.getElementById('taxReserveAmount').textContent = formatJPY(info.additionalTax);
@@ -2716,3 +2755,4 @@ function doGet() {
   </script>
 </body>
 </html>
+```
