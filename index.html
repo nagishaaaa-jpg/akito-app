@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="あきと資産相棒">
+  <meta name="theme-color" content="#0f172a">
+  <title>あきと専用 資産＆トレード相棒アプリ</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+          },
+          colors: {
+            slate: {
+              850: '#162033',
+              900: '#0f172a',
+              950: '#090ed0',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #f8fafc;
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+      overflow-x: hidden;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    
+    /* Custom Range Slider with Stylish Orange Accent */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #334155;
+      height: 8px;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fb923c, #ea580c);
+      cursor: pointer;
+      border: 3px solid #0f172a;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.5);
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .orange-glow-card {
+      background: linear-gradient(145deg, rgba(249, 115, 22, 0.14), rgba(15, 23, 42, 0.95) 65%);
+      border: 1.5px solid rgba(249, 115, 22, 0.45);
+      box-shadow: 0 8px 25px -5px rgba(249, 115, 22, 0.15);
+    }
+    .bottom-nav-safe {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade {
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="min-h-screen select-none">
+
+  <!-- ================= HEADER & IRON RULE ================= -->
+  <header class="sticky top-0 z-30 bg-slate-900/95 backdrop-blur-md border-b border-slate-800 px-3 pt-2 pb-2.5 shadow-lg">
+    <div class="max-w-lg mx-auto">
+      <!-- Top Row: Title + Controls -->
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <div class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse shadow-[0_0_8px_#f97316]"></span>
+          <h1 class="text-sm font-black tracking-tight text-slate-100">AKITO <span class="text-orange-400 font-bold">ASSET</span> <span class="text-emerald-400 font-bold">& TRADE</span></h1>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Gross / Net Profit Switch -->
+          <button id="btnTaxMode" onclick="toggleTaxMode()" class="flex items-center bg-slate-800 border border-slate-700 rounded-full p-0.5 text-[11px] font-bold transition-all">
+            <span id="lblGross" class="px-2 py-0.5 rounded-full bg-orange-500 text-slate-950 transition-all">税引前</span>
+            <span id="lblNet" class="px-2 py-0.5 rounded-full text-slate-400 transition-all">手取り</span>
+          </button>
+
+          <!-- Privacy Mask Toggle -->
+          <button id="btnPrivacy" onclick="togglePrivacy()" class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-base hover:bg-slate-700 active:scale-95 transition" title="金額モザイク切替">
+            <span id="iconPrivacy">👁️</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Editable Iron Rule Banner (Orange Accent) -->
+      <div onclick="openRuleModal()" class="group cursor-pointer bg-gradient-to-r from-orange-500/20 via-amber-500/10 to-slate-800 border border-orange-500/40 rounded-xl px-3 py-1.5 flex items-center justify-between gap-2 active:scale-[0.99] transition">
+        <div class="flex items-center gap-2 min-w-0">
+          <span class="text-xs bg-orange-500 text-slate-950 px-1.5 py-0.5 rounded font-black shrink-0 shadow-sm">鉄の掟</span>
+          <p id="ironRuleText" class="text-xs font-bold text-orange-100 truncate">ロットは絶対に張りすぎない。損切りラインを決めてから入れ！</p>
+        </div>
+        <span class="text-[11px] text-orange-300/80 group-hover:text-orange-200 shrink-0">✎</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTENT CONTAINER ================= -->
+  <main class="max-w-lg mx-auto px-3 pt-3 space-y-4">
+
+    <!-- =========================================================
+         TAB 1: 📅 収支カレンダー (Trade P&L Calendar)
+         ========================================================= -->
+    <section id="tab-calendar" class="tab-section space-y-3.5 animate-fade">
+      
+      <!-- Annual Target Progress Card -->
+      <div class="glass-card rounded-2xl p-3.5 shadow-md">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="flex items-center gap-1.5">
+            <span class="text-xs font-bold text-slate-300">🎯 年間目標利益 (<span id="targetYearLabel">2026</span>年)</span>
+            <button onclick="openTargetModal()" class="text-[11px] text-orange-400 bg-orange-500/10 border border-orange-500/30 px-1.5 py-0.2 rounded hover:bg-orange-500/20 font-bold">目標変更</button>
+          </div>
+          <span id="annualProgressPct" class="text-xs font-black text-orange-400">0.0%</span>
+        </div>
+
+        <!-- Progress Bar (Orange to Emerald Gradient) -->
+        <div class="w-full h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700/60 mb-2">
+          <div id="annualProgressBar" class="h-full bg-gradient-to-r from-orange-500 via-amber-400 to-emerald-400 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+
+        <div class="flex items-center justify-between text-xs">
+          <div>
+            <span class="text-slate-400">年間累計<span class="tax-mode-badge text-[10px] ml-0.5 text-orange-400">(税引前)</span>: </span>
+            <span id="annualCurrentProfit" class="font-extrabold text-slate-100">¥0</span>
+          </div>
+          <div>
+            <span class="text-slate-400">目標 </span>
+            <span id="annualTargetDisplay" class="font-bold text-slate-300">¥1,000,000</span>
+            <span id="annualRemainingText" class="text-slate-400 ml-1">(あと¥1,000,000)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Selector & Big P&L Display -->
+      <div class="glass-card rounded-2xl p-4 shadow-md">
+        <div class="flex items-center justify-between mb-2">
+          <button onclick="changeMonth(-1)" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-200 font-bold active:scale-90 transition">‹</button>
+          <div class="text-center">
+            <div id="currentMonthLabel" class="text-base font-black text-slate-100 tracking-wide">2026年 10月</div>
+            <div class="text-[11px] text-slate-400">日付タップで収支・反省メモを入力</div>
+          </div>
+          <button onclick="changeMonth(1)" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 flex items-center justify-center text-slate-200 font-bold active:scale-90 transition">›</button>
+        </div>
+
+        <!-- Monthly Total P&L -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3 text-center my-2">
+          <div class="text-xs text-slate-400 font-medium mb-0.5">
+            今月のトータル収支 <span class="tax-mode-badge text-emerald-400 font-bold">(税引前)</span>
+          </div>
+          <div id="monthlyTotalPnL" class="text-3xl font-black tracking-tight text-slate-100">+¥0</div>
+        </div>
+
+        <!-- Monthly Mini-Stats Row -->
+        <div class="grid grid-cols-4 gap-1.5 text-center mt-2.5">
+          <div class="bg-slate-800/70 rounded-xl p-2 border border-slate-700/50">
+            <div class="text-[10px] text-slate-400">勝率 (勝敗)</div>
+            <div id="statWinRate" class="text-xs font-extrabold text-slate-100 mt-0.5">0%</div>
+            <div id="statWinLossCount" class="text-[10px] text-slate-400">0勝0敗</div>
+          </div>
+          <div class="bg-slate-800/70 rounded-xl p-2 border border-slate-700/50">
+            <div class="text-[10px] text-slate-400">PF (利益率)</div>
+            <div id="statPF" class="text-xs font-extrabold text-slate-100 mt-0.5">-</div>
+            <div class="text-[10px] text-slate-400">総利÷総損</div>
+          </div>
+          <div class="bg-slate-800/70 rounded-xl p-2 border border-slate-700/50">
+            <div class="text-[10px] text-slate-400">平均勝ち</div>
+            <div id="statAvgWin" class="text-xs font-extrabold text-emerald-400 mt-0.5">¥0</div>
+          </div>
+          <div class="bg-slate-800/70 rounded-xl p-2 border border-slate-700/50">
+            <div class="text-[10px] text-slate-400">平均負け</div>
+            <div id="statAvgLoss" class="text-xs font-extrabold text-rose-400 mt-0.5">¥0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="glass-card rounded-2xl p-3 shadow-md">
+        <!-- Weekday Headers -->
+        <div class="grid grid-cols-7 gap-1 text-center text-[11px] font-bold mb-1.5">
+          <div class="text-rose-400">日</div>
+          <div class="text-slate-400">月</div>
+          <div class="text-slate-400">火</div>
+          <div class="text-slate-400">水</div>
+          <div class="text-slate-400">木</div>
+          <div class="text-slate-400">金</div>
+          <div class="text-sky-400">土</div>
+        </div>
+        <!-- Days Grid -->
+        <div id="calendarGrid" class="grid grid-cols-7 gap-1.5"></div>
+      </div>
+
+      <!-- Recent Memos & Entries List for Current Month -->
+      <div class="glass-card rounded-2xl p-3.5 shadow-md">
+        <h3 class="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
+          <span>📝 今月のトレード記録・反省メモ一覧</span>
+        </h3>
+        <div id="monthlyMemoList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+          <!-- Populated via JS -->
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 2: 🧮 ロット＆損益電卓 (XM 20% Stop-Out Endurance Lot & P&L Calculator)
+         ========================================================= -->
+    <section id="tab-lotcalc" class="tab-section hidden space-y-3.5 animate-fade">
+      
+      <!-- Instrument Selector & XM Contract Size Config -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-black text-slate-100 flex items-center gap-1.5">
+              <span class="text-orange-400">🛡️</span>
+              <span>XM対応 耐久ロット＆損益シミュレーター</span>
+            </h2>
+            <p class="text-[11px] text-slate-400">証拠金維持率20%ロスカット基準で安全ロットを逆算</p>
+          </div>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button onclick="openCustomInstModal()" class="px-2.5 py-1.5 rounded-xl bg-orange-500/15 hover:bg-orange-500/25 border border-orange-500/40 text-[11px] font-bold text-orange-300 active:scale-95 transition">
+              ＋銘柄追加
+            </button>
+            <button onclick="toggleBrokerConfig()" class="px-2.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-slate-200 flex items-center gap-1 active:scale-95 transition">
+              <span>⚙️微調整</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Instrument Preset Pills (Built-ins + Custom) -->
+        <div class="grid grid-cols-3 sm:grid-cols-4 gap-1.5" id="instrumentPresetGrid">
+          <!-- Dynamically populated by renderInstrumentButtons() -->
+        </div>
+
+        <!-- USD/JPY Quick Bar (Shown automatically when USD-denominated instrument like US100/Gold/Oil is active) -->
+        <div id="usdJpyQuickBar" class="hidden bg-orange-500/10 border border-orange-500/30 rounded-xl px-3 py-2 flex items-center justify-between gap-2">
+          <div class="text-[11px] text-orange-200 font-bold flex items-center gap-1.5">
+            <span>💵 ドル建て銘柄: ドル円換算レート</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <input type="number" id="quickUsdJpyInput" value="150" step="0.5" oninput="syncUsdJpyRate(this.value)" class="w-20 bg-slate-900 border border-orange-400/50 rounded-lg px-2 py-1 text-right text-xs font-black text-white outline-none">
+            <span class="text-xs text-orange-300 font-bold">円/$</span>
+          </div>
+        </div>
+
+        <!-- Collapsible Broker Contract Size & XM Stop-Out Adjuster -->
+        <div id="brokerConfigPanel" class="hidden bg-slate-900/95 border border-orange-500/40 rounded-xl p-3 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-orange-400">⚙️ XM口座条件・コントラクトサイズ設定</span>
+            <span id="brokerPresetHint" class="text-[10px] text-slate-400">銘柄設定</span>
+          </div>
+          <p class="text-[11px] text-slate-300 leading-relaxed">
+            XMのロスカット水準（証拠金維持率20%）と口座レバレッジ、1Lotあたりの単位を微調整できます。
+          </p>
+
+          <!-- Quick Multiplier Presets for current instrument -->
+          <div id="quickMultiplierButtons" class="flex flex-wrap gap-1.5"></div>
+
+          <div class="grid grid-cols-2 gap-2 pt-1">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">1Lotのコントラクトサイズ(単位)</label>
+              <input type="number" id="inputContractSize" step="any" oninput="onBrokerParamInput()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white focus:border-orange-400 outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">口座レバレッジ (倍)</label>
+              <input type="number" id="inputLeverage" value="500" step="50" oninput="onBrokerParamInput()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs font-bold text-orange-300 focus:border-orange-400 outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">ロスカット維持率 (%)</label>
+              <input type="number" id="inputStopOutPct" value="20" step="5" oninput="onBrokerParamInput()" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs font-bold text-orange-300 focus:border-orange-400 outline-none">
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">ドル円レート (ドル建て用)</label>
+              <input type="number" id="inputUsdJpyRate" value="150" step="0.5" oninput="syncUsdJpyRate(this.value)" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2.5 py-1.5 text-xs font-bold text-white focus:border-orange-400 outline-none">
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-800">
+            <span class="text-[10px] text-slate-400 self-center mr-1">レバレッジ早見:</span>
+            <button onclick="setLeverageQuick(1000)" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-200 border border-slate-700">1000倍(FX/金)</button>
+            <button onclick="setLeverageQuick(500)" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-200 border border-slate-700">500倍(XM株価指数)</button>
+            <button onclick="setLeverageQuick(200)" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-200 border border-slate-700">200倍</button>
+            <button onclick="setLeverageQuick(66.7)" class="px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-200 border border-slate-700">66.7倍(XM原油)</button>
+          </div>
+        </div>
+
+        <!-- Current Active Multiplier Status Bar -->
+        <div class="bg-slate-900/80 rounded-lg px-3 py-1.5 flex flex-wrap items-center justify-between gap-1 text-[11px] border border-slate-800">
+          <span class="text-slate-400">現在の計算条件:</span>
+          <span id="currentCalcBasisText" class="font-bold text-orange-300">1lotで1動くと±1円 / レバ500倍・維持率20%</span>
+        </div>
+      </div>
+
+      <!-- SECTION A: 逆算ロット計算機 (XM 20% Stop-Out Endurance Lot Calculator) -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span class="bg-orange-500 text-slate-950 px-1.5 py-0.5 rounded text-[10px] font-black">STEP 1</span>
+            <span>耐えたい値幅から耐久ロットを逆算</span>
+          </h3>
+          <span class="text-[10px] text-slate-400 font-bold">XM維持率20%基準</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <!-- Account Equity -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-bold text-slate-300 mb-1">💰 有効証拠金 (口座資金・円)</label>
+            <div class="relative">
+              <input type="number" id="calcEquity" value="160000" step="10000" oninput="calculateEnduranceLot()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-extrabold text-white focus:border-orange-400 outline-none">
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">円</span>
+            </div>
+            <div class="flex gap-1 mt-1.5">
+              <button onclick="setEquityQuick(50000)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-[10px] py-1 rounded text-slate-300 font-bold">5万</button>
+              <button onclick="setEquityQuick(100000)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-[10px] py-1 rounded text-slate-300 font-bold">10万</button>
+              <button onclick="setEquityQuick(160000)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-[10px] py-1 rounded text-orange-300 font-bold">16万</button>
+              <button onclick="setEquityQuick(300000)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-[10px] py-1 rounded text-slate-300 font-bold">30万</button>
+              <button onclick="setEquityQuick(500000)" class="flex-1 bg-slate-800 hover:bg-slate-700 text-[10px] py-1 rounded text-slate-300 font-bold">50万</button>
+            </div>
+          </div>
+
+          <!-- Current Price -->
+          <div class="col-span-2 sm:col-span-1">
+            <label class="block text-xs font-bold text-slate-300 mb-1">📈 現在価格 (<span class="unit-label">円</span>)</label>
+            <input type="number" id="calcCurrentPrice" value="39000" step="any" oninput="onCurrentPriceChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-base font-extrabold text-white focus:border-orange-400 outline-none">
+            <div class="text-[10px] text-slate-400 mt-1.5">※必要証拠金とロスカット価格の算出に使います</div>
+          </div>
+        </div>
+
+        <!-- Endurance Distance (Price Drop/Rise to withstand) -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-200">⚡ 耐えたい逆行値幅 (<span class="unit-label">円</span>幅)</label>
+            <span id="stopPricePreview" class="text-[11px] font-bold text-orange-400">逆行限界価格: 36,000</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <span class="text-[10px] text-slate-400">耐えたい値幅で入力</span>
+              <input type="number" id="calcEndureDistance" value="3000" step="any" oninput="onDistanceInput()" class="w-full bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 text-base font-extrabold text-orange-300 focus:border-orange-400 outline-none">
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-400">または耐えたい価格で入力</span>
+              <input type="number" id="calcTargetStopPrice" value="36000" step="any" oninput="onStopPriceInput()" class="w-full bg-slate-800 border border-slate-600 rounded-xl px-3 py-2 text-base font-bold text-slate-200 focus:border-orange-400 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <!-- Output: Calculated XM 20% Stop-Out Endurance Lots (Orange Accent Card) -->
+        <div class="orange-glow-card rounded-2xl p-3.5 text-center">
+          <div class="inline-flex items-center gap-1 bg-orange-500/20 border border-orange-500/40 text-orange-300 text-[11px] font-black px-2.5 py-0.5 rounded-full mb-1">
+            <span>🔥 XMロスカット水準 (証拠金維持率<span id="lblStopOutBadge">20</span>%) 耐久上限</span>
+          </div>
+          <div class="flex items-baseline justify-center gap-1.5 my-1">
+            <span id="resultMaxLot" class="text-4xl font-black text-white tracking-tight">53.05</span>
+            <span class="text-base font-bold text-orange-400">lot</span>
+          </div>
+          <p id="resultMaxLotDesc" class="text-[11px] text-slate-200 mb-2.5">
+            53.05 lot なら 3,000円 逆行しても維持率20%を割らずに耐えられます
+          </p>
+
+          <!-- XM Margin & Stop-Out Breakdown Mini Bar -->
+          <div class="grid grid-cols-3 gap-1.5 bg-slate-950/70 border border-slate-800 rounded-xl p-2 mb-3 text-[10px]">
+            <div>
+              <div class="text-slate-400">必要証拠金合計</div>
+              <div id="xmRequiredMarginText" class="font-bold text-slate-200 mt-0.5">¥4,137</div>
+            </div>
+            <div>
+              <div class="text-slate-400">ロスカ発動残高(20%)</div>
+              <div id="xmStopOutEquityText" class="font-bold text-orange-300 mt-0.5">¥827</div>
+            </div>
+            <div>
+              <div class="text-slate-400">許容できる含み損</div>
+              <div id="xmMaxLossText" class="font-bold text-rose-300 mt-0.5">-¥159,173</div>
+            </div>
+          </div>
+
+          <!-- 3 Risk Tiers (Tap to send to simulator below) -->
+          <div class="text-[10px] text-slate-400 mb-1.5">👇 タップすると下の損益シミュレーターにセットされます</div>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="applyTierLot('safe')" class="bg-slate-900/90 hover:bg-slate-800 border border-sky-500/30 rounded-xl p-2 text-center active:scale-95 transition">
+              <div class="text-[10px] font-bold text-sky-400">安全 (資金10%)</div>
+              <div id="tierSafeLot" class="text-sm font-black text-white mt-0.5">5.33 lot</div>
+              <div id="tierSafeRisk" class="text-[10px] text-slate-400">-¥16,000</div>
+            </button>
+            <button onclick="applyTierLot('standard')" class="bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 rounded-xl p-2 text-center active:scale-95 transition">
+              <div class="text-[10px] font-bold text-emerald-400">標準 (資金30%)</div>
+              <div id="tierStdLot" class="text-sm font-black text-white mt-0.5">16.00 lot</div>
+              <div id="tierStdRisk" class="text-[10px] text-slate-400">-¥48,000</div>
+            </button>
+            <button onclick="applyTierLot('max')" class="bg-orange-950/40 hover:bg-orange-900/50 border border-orange-500/60 rounded-xl p-2 text-center active:scale-95 transition shadow-sm">
+              <div class="text-[10px] font-black text-orange-400">XM維持率20%限界</div>
+              <div id="tierMaxLot" class="text-sm font-black text-white mt-0.5">53.05 lot</div>
+              <div id="tierMaxRisk" class="text-[10px] text-orange-300">-¥159,173</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION B: 連動・損益シミュレーター (Price Move P&L Simulator) -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3.5">
+        <div class="flex items-center justify-between">
+          <h3 class="text-xs font-black text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span class="bg-orange-500 text-slate-950 px-1.5 py-0.5 rounded text-[10px] font-black">STEP 2</span>
+            <span>〇〇動いたらいくらの損益になる？</span>
+          </h3>
+          <span class="text-[10px] text-slate-400">ロット自由変更OK</span>
+        </div>
+
+        <!-- Active Lot Input with +/- steppers -->
+        <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex items-center justify-between">
+          <div>
+            <div class="text-xs font-bold text-slate-200">シミュレーションするロット数</div>
+            <div class="text-[10px] text-slate-400">上の計算結果と自動連動（手入力も可）</div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="adjustSimLot(-0.1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 font-bold text-white active:scale-90">-</button>
+            <input type="number" id="simLotInput" value="53.05" step="0.01" min="0.01" oninput="updatePnLSimulation()" class="w-24 bg-slate-800 border border-orange-500/60 rounded-lg py-1.5 text-center text-base font-black text-orange-300 outline-none">
+            <button onclick="adjustSimLot(0.1)" class="w-8 h-8 rounded-lg bg-slate-800 border border-slate-600 font-bold text-white active:scale-90">+</button>
+          </div>
+        </div>
+
+        <!-- Price Movement Slider & Input -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-300">予想する値動き幅 (<span class="unit-label">円</span> / pt)</label>
+            <div class="flex items-center gap-1">
+              <input type="number" id="simMoveDistance" value="500" step="any" oninput="syncSimSliderFromInput()" class="w-24 bg-slate-900 border border-orange-500/40 rounded-lg px-2 py-1 text-right text-sm font-black text-white outline-none">
+              <span class="unit-label text-xs text-orange-300 font-bold">円</span>
+            </div>
+          </div>
+          <input type="range" id="simMoveSlider" min="10" max="5000" step="10" value="500" oninput="syncSimInputFromSlider()" class="w-full">
+          <div class="flex justify-between text-[10px] text-slate-400">
+            <span>小幅</span>
+            <span>スライダーで値幅を自由にテスト</span>
+            <span>大幅</span>
+          </div>
+        </div>
+
+        <!-- Dual Result Box: Profit vs Loss -->
+        <div class="grid grid-cols-2 gap-2.5 pt-1">
+          <!-- If Favorable Move (+ Profit) -->
+          <div class="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-3 text-center">
+            <div class="text-[11px] font-bold text-emerald-300">📈 思惑通り <span class="sim-move-label">+500</span> 動いたら</div>
+            <div id="simProfitOutput" class="text-xl font-black text-emerald-400 my-1">+¥26,525</div>
+            <div id="simTargetWinPrice" class="text-[10px] text-slate-400">到達価格: 39,500</div>
+          </div>
+          <!-- If Adverse Move (- Loss) -->
+          <div class="bg-rose-950/40 border border-rose-500/40 rounded-xl p-3 text-center">
+            <div class="text-[11px] font-bold text-rose-300">📉 逆に <span class="sim-move-label">-500</span> 動いたら</div>
+            <div id="simLossOutput" class="text-xl font-black text-rose-400 my-1">-¥26,525</div>
+            <div id="simTargetLossPrice" class="text-[10px] text-slate-400">逆行価格: 38,500</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 3: 📊 ポートフォリオ＆複利 (Portfolio & Compound Simulator)
+         ========================================================= -->
+    <section id="tab-portfolio" class="tab-section hidden space-y-4 animate-fade">
+      
+      <!-- Rakuten Securities Style Portfolio Card -->
+      <div class="glass-card rounded-2xl p-4 shadow-md">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h2 class="text-sm font-black text-slate-100">投資信託・積立ポートフォリオ</h2>
+            <p class="text-[11px] text-slate-400">自分で銘柄を追加・管理して比率を可視化</p>
+          </div>
+          <button onclick="openAssetModal()" class="px-3 py-1.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow active:scale-95 transition">
+            ＋ 銘柄追加
+          </button>
+        </div>
+
+        <!-- SVG Donut / Pie Chart Area -->
+        <div class="relative flex flex-col items-center justify-center my-2">
+          <svg id="portfolioPieSvg" viewBox="0 0 260 260" class="w-56 h-56 drop-shadow-lg"></svg>
+        </div>
+
+        <!-- Total Portfolio Summary (Rakuten Style) -->
+        <div class="border-t border-slate-700/70 pt-3 mt-2 space-y-2">
+          <div class="flex items-baseline justify-between">
+            <span class="text-xs font-bold text-slate-300">投資信託・積立合計額</span>
+            <span id="pfTotalValue" class="text-2xl font-black text-white tracking-tight">¥1,200,000</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">投資元本合計</span>
+            <span id="pfTotalPrincipal" class="font-bold text-slate-300">¥1,000,000</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">評価損益 (率)</span>
+            <span id="pfTotalGain" class="font-extrabold text-emerald-400">+¥200,000 (+20.00%)</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">毎月の積立設定合計</span>
+            <span id="pfTotalMonthly" class="font-bold text-emerald-300">毎月 ¥50,000</span>
+          </div>
+        </div>
+
+        <!-- Asset Breakdown List -->
+        <div id="portfolioAssetList" class="mt-4 space-y-2 border-t border-slate-800 pt-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Before / After Compound Interest Simulator -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3.5">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-black text-slate-100">🚀 積立ペース変更・複利シミュレーター</h3>
+            <p class="text-[11px] text-slate-400">「現状の積立額」から「変更後の積立額」に変えると将来いくら変わる？</p>
+          </div>
+          <button onclick="syncCompoundFromPortfolio()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[11px] font-bold text-emerald-400 shrink-0 active:scale-95">
+            現在額を反映
+          </button>
+        </div>
+
+        <!-- Sliders -->
+        <div class="space-y-3 bg-slate-900/70 rounded-xl p-3 border border-slate-800">
+          <!-- Initial Principal -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300 font-bold">現在の元本 (初期投資額)</span>
+              <span id="lblCompPrincipal" class="font-black text-white">100万円</span>
+            </div>
+            <input type="range" id="sliderCompPrincipal" min="0" max="2000" step="10" value="100" oninput="updateCompoundSim()" class="w-full">
+          </div>
+
+          <!-- Current Monthly (Before) -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-300 font-bold">現状の毎月積立額 (Before)</span>
+              <span id="lblCompMonthlyBefore" class="font-black text-sky-400">毎月 3.0万円</span>
+            </div>
+            <input type="range" id="sliderCompMonthlyBefore" min="0" max="30" step="0.5" value="3" oninput="updateCompoundSim()" class="w-full">
+          </div>
+
+          <!-- New Monthly (After) -->
+          <div>
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-emerald-300 font-bold">🔥 変更後の毎月積立額 (After)</span>
+              <span id="lblCompMonthlyAfter" class="font-black text-emerald-400">毎月 5.0万円</span>
+            </div>
+            <input type="range" id="sliderCompMonthlyAfter" min="0" max="30" step="0.5" value="5" oninput="updateCompoundSim()" class="w-full">
+          </div>
+
+          <!-- Return Rate & Years -->
+          <div class="grid grid-cols-2 gap-3 pt-1">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300 font-bold">想定年利</span>
+                <span id="lblCompRate" class="font-black text-amber-400">5.0%</span>
+              </div>
+              <input type="range" id="sliderCompRate" min="1" max="15" step="0.5" value="5" oninput="updateCompoundSim()" class="w-full">
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-300 font-bold">運用期間</span>
+                <span id="lblCompYears" class="font-black text-white">20年</span>
+              </div>
+              <input type="range" id="sliderCompYears" min="5" max="40" step="1" value="20" oninput="updateCompoundSim()" class="w-full">
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparison Banner -->
+        <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-slate-900 border border-emerald-500/40 rounded-xl p-3 text-center">
+          <div id="compDiffHeadline" class="text-xs font-bold text-emerald-300">月+2.0万円ペースを上げると、20年後に…</div>
+          <div id="compDiffAmount" class="text-2xl font-black text-white my-0.5">+822万円 増えます！</div>
+          <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-800 text-xs">
+            <div>
+              <div class="text-[10px] text-slate-400">現状ペース最終額</div>
+              <div id="compBeforeTotal" class="font-extrabold text-sky-400">1,498万円</div>
+              <div id="compBeforePrincipal" class="text-[10px] text-slate-400">元本 820万円</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400">変更後ペース最終額</div>
+              <div id="compAfterTotal" class="font-extrabold text-emerald-400">2,320万円</div>
+              <div id="compAfterPrincipal" class="text-[10px] text-slate-400">元本 1,300万円</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SVG Line/Area Comparison Chart -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-3">
+          <div class="flex items-center justify-between text-[11px] mb-2">
+            <span class="text-slate-400 font-bold">資産推移グラフ</span>
+            <div class="flex items-center gap-3">
+              <span class="flex items-center gap-1 text-emerald-400 font-bold"><i class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></i>変更後</span>
+              <span class="flex items-center gap-1 text-sky-400 font-bold"><i class="w-2.5 h-2.5 rounded-full bg-sky-400 inline-block"></i>現状</span>
+              <span class="flex items-center gap-1 text-slate-400"><i class="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></i>変更後元本</span>
+            </div>
+          </div>
+          <svg id="compoundChartSvg" viewBox="0 0 360 190" class="w-full h-44 overflow-visible"></svg>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- =========================================================
+         TAB 4: ⚙️ 税金・データ連携 (Tax Estimator & Backup/Sheets)
+         ========================================================= -->
+    <section id="tab-settings" class="tab-section hidden space-y-4 animate-fade">
+      
+      <!-- Overseas Broker Tax Estimator Card -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-black text-slate-100">💴 海外証券・来年の税金ざっくり試算</h2>
+            <p class="text-[11px] text-slate-400">給与年収と年間トレード利益(雑所得・総合課税)から追加税額を試算</p>
+          </div>
+          <span class="text-[10px] bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">手取りスイッチ連動</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">🏢 給与年収 (額面・円)</label>
+            <input type="number" id="taxSalaryInput" value="4500000" step="100000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-emerald-400 outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-300 mb-1">🧾 年間経費 (通信費等・円)</label>
+            <input type="number" id="taxExpenseInput" value="0" step="10000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm font-extrabold text-white focus:border-emerald-400 outline-none">
+          </div>
+        </div>
+
+        <!-- Trade Profit Source Selector -->
+        <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300 font-bold">カレンダーの今年度トレード累計利益</span>
+            <span id="taxCalendarProfitText" class="font-black text-emerald-400">¥0</span>
+          </div>
+          <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-800">
+            <span class="text-slate-400">シミュレーション用に任意の利益額で試算する(空欄ならカレンダー連動)</span>
+          </div>
+          <input type="number" id="taxOverrideProfitInput" placeholder="カレンダーの数値を自動使用中 (手入力でテスト可)" step="50000" oninput="saveTaxSettingsAndCalc()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-bold text-amber-300 outline-none">
+        </div>
+
+        <!-- Tax Calculation Output -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/30 border border-amber-500/30 rounded-xl p-3.5 space-y-2">
+          <div class="flex items-baseline justify-between">
+            <span class="text-xs font-bold text-amber-200">来年の追加税金目安 (所得税+住民税10%)</span>
+            <span id="taxEstimatedTotal" class="text-2xl font-black text-amber-400">¥0</span>
+          </div>
+          <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-800 text-center text-xs">
+            <div>
+              <div class="text-[10px] text-slate-400">実質税負担率</div>
+              <div id="taxEffectiveRate" class="font-extrabold text-slate-200">0.0%</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400">税金確保目安</div>
+              <div id="taxReserveAmount" class="font-extrabold text-amber-300">¥0</div>
+            </div>
+            <div>
+              <div class="text-[10px] text-slate-400">税引後手取り利益</div>
+              <div id="taxNetTradeProfit" class="font-extrabold text-emerald-400">¥0</div>
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400 leading-relaxed pt-1">
+            ※給与所得控除・基礎控除(48万)・社会保険料控除(約15%)を考慮した総合課税の概算です。確定申告時の目安としてご活用ください。
+          </p>
+        </div>
+      </div>
+
+      <!-- Google Spreadsheet Cloud Sync Card -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm font-black text-slate-100">☁️ Googleスプレッドシート連携</h2>
+            <p class="text-[11px] text-slate-400">ワンタップでシートに記録保存＆シートからアプリへ完全復元</p>
+          </div>
+          <button onclick="openGasGuideModal()" class="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] font-bold hover:bg-emerald-500/25">
+            📖 1分連携ガイド
+          </button>
+        </div>
+
+        <div>
+          <label class="block text-[11px] text-slate-400 mb-1">Google Apps Script ウェブアプリURL</label>
+          <input type="url" id="gasWebAppUrl" placeholder="https://script.google.com/macros/s/xxxxxx/exec" oninput="saveGasUrl()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:border-emerald-400 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="syncToGoogleSheet()" class="py-2.5 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow active:scale-95 transition">
+            <span>⬆️ シートへ保存</span>
+          </button>
+          <button onclick="restoreFromGoogleSheet()" class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 font-bold text-xs flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <span>⬇️ シートから復元</span>
+          </button>
+        </div>
+        <div id="gasSyncStatus" class="text-[11px] text-slate-400 text-center hidden"></div>
+      </div>
+
+      <!-- Local File & Text Backup Card -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-3">
+        <div>
+          <h2 class="text-sm font-black text-slate-100">💾 本体バックアップ＆復元 (キャッシュ消去対策)</h2>
+          <p class="text-[11px] text-slate-400">ブラウザの履歴を消す前にファイル保存またはコードコピーしておけば100%元通りになります</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5">
+          <button onclick="downloadBackupFile()" class="py-2.5 px-3 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1 shadow active:scale-95 transition">
+            <span>📥 ファイルに保存</span>
+          </button>
+          <label class="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 font-bold text-xs flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition">
+            <span>📤 ファイルから復元</span>
+            <input type="file" accept=".json" onchange="uploadBackupFile(event)" class="hidden">
+          </label>
+        </div>
+
+        <!-- Text Code Copy/Paste Backup -->
+        <div class="border-t border-slate-800 pt-2.5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-300">📋 テキストでバックアップ (メモ帳用)</span>
+            <div class="flex gap-1.5">
+              <button onclick="copyBackupText()" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600 text-[11px] font-bold text-orange-400 active:scale-95">コピー</button>
+              <button onclick="restoreFromBackupText()" class="px-2.5 py-1 rounded-lg bg-slate-800 border border-slate-600 text-[11px] font-bold text-emerald-400 active:scale-95">貼付データから復元</button>
+            </div>
+          </div>
+          <textarea id="backupTextArea" rows="2" placeholder="ここにバックアップコードを貼り付けて「貼付データから復元」を押すと復元できます" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2 text-[11px] text-slate-300 font-mono outline-none"></textarea>
+        </div>
+      </div>
+
+      <!-- Home Screen Install Guide Card -->
+      <div class="glass-card rounded-2xl p-4 shadow-md space-y-2.5 border border-orange-500/30">
+        <h2 class="text-sm font-black text-orange-400 flex items-center gap-1.5">
+          <span>📱 スマホのホーム画面にアプリとして置く方法</span>
+        </h2>
+        <div class="text-xs text-slate-300 space-y-2 leading-relaxed">
+          <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800">
+            <div class="font-bold text-white mb-1">🍎 iPhone (Safari) の場合</div>
+            <p class="text-[11px] text-slate-300">1. このHTMLファイルを「ファイル」アプリに保存するか、Web上に置いて<b>Safari</b>で開きます。<br>2. 画面下の<b>共有ボタン（四角から上矢印 📤）</b>をタップ。<br>3. メニューから<b>「ホーム画面に追加」</b>を押すと、本物のアプリのようにアイコンが作られます！</p>
+          </div>
+          <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800">
+            <div class="font-bold text-white mb-1">🤖 Android (Chrome) の場合</div>
+            <p class="text-[11px] text-slate-300">1. <b>Chrome</b>で開きます。<br>2. 右上の<b>メニュー（︙）</b>をタップ。<br>3. <b>「ホーム画面に追加」</b>をタップするとホーム画面から1タップで全画面起動できます！</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ================= BOTTOM NAVIGATION BAR ================= -->
+  <nav class="fixed bottom-0 left-0 right-0 z-30 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 bottom-nav-safe">
+    <div class="max-w-lg mx-auto grid grid-cols-4 h-16">
+      <button onclick="switchTab('calendar')" id="nav-calendar" class="nav-btn flex flex-col items-center justify-center gap-0.5 text-orange-400 font-bold transition">
+        <span class="text-lg">📅</span>
+        <span class="text-[10px]">収支カレンダー</span>
+      </button>
+      <button onclick="switchTab('lotcalc')" id="nav-lotcalc" class="nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium transition">
+        <span class="text-lg">🧮</span>
+        <span class="text-[10px]">ロット＆損益</span>
+      </button>
+      <button onclick="switchTab('portfolio')" id="nav-portfolio" class="nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium transition">
+        <span class="text-lg">📊</span>
+        <span class="text-[10px]">積立＆複利</span>
+      </button>
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn flex flex-col items-center justify-center gap-0.5 text-slate-400 font-medium transition">
+        <span class="text-lg">⚙️</span>
+        <span class="text-[10px]">税金・連携</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ================= MODALS ================= -->
+  <!-- 1. Day Entry Modal (Calendar P&L + Memo) -->
+  <div id="dayEntryModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3.5 shadow-2xl animate-fade">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 id="modalDateTitle" class="text-sm font-black text-orange-400">2026年10月15日 (木)</h3>
+        <button onclick="closeDayModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">💰 確定損益 (円)</label>
+        <input type="number" id="modalPnLInput" placeholder="例: 25000 または -12000" step="1000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-lg font-black text-white focus:border-orange-400 outline-none">
+        
+        <!-- Quick Calculator Buttons -->
+        <div class="grid grid-cols-4 gap-1.5 mt-2">
+          <button onclick="addModalPnL(100000)" class="py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold active:scale-95">+10万</button>
+          <button onclick="addModalPnL(50000)" class="py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold active:scale-95">+5万</button>
+          <button onclick="addModalPnL(10000)" class="py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold active:scale-95">+1万</button>
+          <button onclick="addModalPnL(1000)" class="py-1.5 rounded-lg bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-extrabold active:scale-95">+1千</button>
+          <button onclick="addModalPnL(-100000)" class="py-1.5 rounded-lg bg-rose-950/70 border border-rose-500/40 text-rose-300 text-xs font-extrabold active:scale-95">-10万</button>
+          <button onclick="addModalPnL(-50000)" class="py-1.5 rounded-lg bg-rose-950/70 border border-rose-500/40 text-rose-300 text-xs font-extrabold active:scale-95">-5万</button>
+          <button onclick="addModalPnL(-10000)" class="py-1.5 rounded-lg bg-rose-950/70 border border-rose-500/40 text-rose-300 text-xs font-extrabold active:scale-95">-1万</button>
+          <button onclick="setModalPnL(0)" class="py-1.5 rounded-lg bg-slate-800 border border-slate-600 text-slate-300 text-xs font-bold active:scale-95">クリア</button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">📝 トレード振り返り・反省メモ</label>
+        <textarea id="modalMemoInput" rows="3" placeholder="例: ルール通り押し目買い成功！ / 指標前に飛び乗って反省…" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-slate-200 focus:border-orange-400 outline-none"></textarea>
+      </div>
+
+      <div class="flex gap-2 pt-1">
+        <button onclick="deleteDayEntry()" class="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950 border border-slate-700 text-rose-400 text-xs font-bold">削除</button>
+        <button onclick="saveDayEntry()" class="flex-1 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-black shadow">記録を保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Portfolio Asset Edit/Add Modal -->
+  <div id="assetModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl animate-fade">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-emerald-400">📊 積立・保有銘柄の登録</h3>
+        <button onclick="closeAssetModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <input type="hidden" id="assetEditId">
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">銘柄・カテゴリ名</label>
+        <input type="text" id="assetNameInput" placeholder="例: 楽天・オルカン / S&P500" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">現在の評価額 (円)</label>
+          <input type="number" id="assetValueInput" placeholder="450000" step="10000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">累計投資元本 (円)</label>
+          <input type="number" id="assetPrincipalInput" placeholder="400000" step="10000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+        </div>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">毎月の積立設定額 (円)</label>
+        <input type="number" id="assetMonthlyInput" placeholder="30000" step="5000" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-emerald-300 outline-none">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button id="btnDeleteAsset" onclick="deletePortfolioAsset()" class="hidden px-3 py-2 rounded-xl bg-slate-800 text-rose-400 text-xs font-bold">削除</button>
+        <button onclick="savePortfolioAsset()" class="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black">保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Simple Prompt Modal (For Iron Rule & Annual Target) -->
+  <div id="simplePromptModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl animate-fade">
+      <h3 id="simpleModalTitle" class="text-sm font-black text-orange-400">設定変更</h3>
+      <input type="text" id="simpleModalInput" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm font-bold text-white focus:border-orange-400 outline-none">
+      <div class="flex justify-end gap-2">
+        <button onclick="closeSimpleModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">キャンセル</button>
+        <button id="simpleModalSaveBtn" class="px-4 py-2 rounded-xl bg-orange-500 text-slate-950 text-xs font-black">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Google Apps Script 1-Minute Setup Guide Modal -->
+  <div id="gasGuideModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-md p-4 space-y-3 shadow-2xl max-h-[85vh] overflow-y-auto animate-fade">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-emerald-400">☁️ スプレッドシート連携 1分設定ガイド</h3>
+        <button onclick="closeGasGuideModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <ol class="text-xs text-slate-300 space-y-2 list-decimal list-inside leading-relaxed">
+        <li>Googleスプレッドシートを新規作成し、上部メニューの<b>「拡張機能」＞「Apps Script」</b>を開きます。</li>
+        <li>最初から書いてあるコードを消して、下の<b>「連携コードをコピー」</b>でコピーしたコードを貼り付けて保存（💾）します。</li>
+        <li>右上の<b>「デプロイ」＞「新しいデプロイ」</b>を押し、種類の歯車から<b>「ウェブアプリ」</b>を選びます。</li>
+        <li>アクセスできるユーザーを<b>「全員」</b>にしてデプロイし、表示された<b>ウェブアプリURL</b>をこのアプリに貼り付ければ完了です！</li>
+      </ol>
+      <pre id="gasCodeSnippet" class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-[10px] text-emerald-300 font-mono overflow-x-auto">function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var raw = e.postData.contents;
+  sheet.getRange(1, 1).setValue(raw);
+  sheet.getRange(1, 2).setValue(new Date());
+  return ContentService.createTextOutput(JSON.stringify({status: 'ok'}))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+function doGet() {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = sheet.getRange(1, 1).getValue() || '{}';
+  return ContentService.createTextOutput(data)
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+      <div class="flex gap-2">
+        <button onclick="copyGasCode()" class="flex-1 py-2 rounded-xl bg-emerald-500 text-slate-950 font-black text-xs">📋 連携コードをコピー</button>
+        <button onclick="closeGasGuideModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 font-bold text-xs">閉じる</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Custom Instrument Add Modal -->
+  <div id="customInstModal" class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-sm p-4 space-y-3 shadow-2xl animate-fade">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-orange-400">➕ カスタム銘柄の追加登録</h3>
+        <button onclick="closeCustomInstModal()" class="text-slate-400 hover:text-white font-bold">✕</button>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-300 mb-1">銘柄名 (ボタンに表示される名前)</label>
+        <input type="text" id="customInstName" placeholder="例: 🇬🇧 UK100 / 🪙 ビットコイン / ユーロドル" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">決済通貨</label>
+          <select id="customInstCurrency" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-2.5 py-2 text-xs font-bold text-orange-300 outline-none">
+            <option value="USD">ドル建て (USD)</option>
+            <option value="JPY">円建て (JPY)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">1Lotの単位 (契約サイズ)</label>
+          <input type="number" id="customInstContract" value="1" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">初期価格の目安</label>
+          <input type="number" id="customInstPrice" value="20000" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-300 mb-1">レバレッジ (倍)</label>
+          <input type="number" id="customInstLeverage" value="500" step="any" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-bold text-white outline-none">
+        </div>
+      </div>
+      <p class="text-[10px] text-slate-400 leading-relaxed">
+        ※XMの株価指数（US100やJP225など）は基本的に「1Lotの単位＝1」「レバレッジ＝500倍」です。
+      </p>
+      <div class="flex gap-2 pt-1">
+        <button onclick="closeCustomInstModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-bold text-slate-300">キャンセル</button>
+        <button onclick="saveCustomInstrument()" class="flex-1 py-2 rounded-xl bg-orange-500 hover:bg-orange-400 text-slate-950 text-xs font-black">銘柄を登録する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastBox" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-orange-500 text-slate-950 font-black text-xs px-4 py-2.5 rounded-full shadow-2xl transition-all"></div>
+
+
+  <!-- ================= APPLICATION JAVASCRIPT ================= -->
+  <script>
+    const STORAGE_KEY = 'akito_asset_trade_app_v1';
+
+    // Default Application State
+    let appState = {
+      ironRule: 'ロットは絶対に張りすぎない。損切りラインを決めてから入れ！',
+      privacyMask: false,
+      taxMode: 'gross', // 'gross' or 'net'
+      annualTarget: 1000000,
+      currentYear: 2026,
+      currentMonth: 10, // 1-12
+      trades: {
+        '2026-10-02': { pnl: 25000, memo: '日経225 押し目買い成功！ルール通り利確◎' },
+        '2026-10-06': { pnl: -12000, memo: '原油 損切りラインでしっかり撤退。深追いせずOK' },
+        '2026-10-09': { pnl: 42000, memo: '豪ドル円 トレンドフォローで伸ばせた！' },
+        '2026-10-14': { pnl: 18500, memo: '日経225 反発狙い、微益だけど堅実' }
+      },
+      lotCalc: {
+        instrument: 'JP225',
+        equity: 160000,
+        currentPrice: 65000,
+        endureDistance: 3000,
+        usdJpy: 150,
+        stopOutPct: 20, // XM Stop-Out level 20%
+        customInstruments: {},
+        overrides: {} // Per-instrument contractSize & leverage overrides
+      },
+      portfolio: [
+        { id: 'pf1', name: '楽天・S&P500', value: 480000, principal: 400000, monthly: 30000 },
+        { id: 'pf2', name: '楽天・オルカン', value: 360000, principal: 320000, monthly: 20000 },
+        { id: 'pf3', name: '楽天・日経225', value: 210000, principal: 180000, monthly: 10000 }
+      ],
+      tax: {
+        salary: 4500000,
+        expense: 0,
+        overrideProfit: ''
+      },
+      gasUrl: ''
+    };
+
+    let selectedDateKey = null;
+
+    // Built-in XM-focused Instrument Definitions
+    const BASE_INSTRUMENTS = {
+      JP225: {
+        name: '🇯🇵 日経225',
+        fullName: '日経225 (XM JP225)',
+        unit: '円',
+        currency: 'JPY',
+        contractSize: 1, // XM JP225 1lot = 1 index
+        leverage: 500,
+        defaultPrice: 39000,
+        defaultDistance: 3000,
+        sliderMax: 5000,
+        sliderStep: 50,
+        presets: [
+          { label: 'XM標準 (1Lot=1単位)', contractSize: 1, leverage: 500 },
+          { label: '1Lot=100単位 (他社CFD)', contractSize: 100, leverage: 500 },
+          { label: '1Lot=10単位', contractSize: 10, leverage: 500 }
+        ]
+      },
+      US100: {
+        name: '🇺🇸 ナスダック',
+        fullName: 'ナスダック100 (XM US100)',
+        unit: 'pt(ドル)',
+        currency: 'USD',
+        contractSize: 1, // XM US100Cash 1lot = $1 per 1pt
+        leverage: 500,
+        defaultPrice: 20500,
+        defaultDistance: 500,
+        sliderMax: 2000,
+        sliderStep: 10,
+        presets: [
+          { label: 'XM現物 US100 (1Lot=1ドル/pt)', contractSize: 1, leverage: 500 },
+          { label: '1Lot=10ドル/pt', contractSize: 10, leverage: 500 },
+          { label: '1Lot=20ドル/pt', contractSize: 20, leverage: 500 }
+        ]
+      },
+      US30: {
+        name: '🇺🇸 NYダウ',
+        fullName: 'NYダウ30 (XM US30)',
+        unit: 'pt(ドル)',
+        currency: 'USD',
+        contractSize: 1,
+        leverage: 500,
+        defaultPrice: 43000,
+        defaultDistance: 1000,
+        sliderMax: 3000,
+        sliderStep: 20,
+        presets: [
+          { label: 'XM現物 US30 (1Lot=1ドル/pt)', contractSize: 1, leverage: 500 },
+          { label: '1Lot=10ドル/pt', contractSize: 10, leverage: 500 }
+        ]
+      },
+      US500: {
+        name: '🇺🇸 S&P500',
+        fullName: 'S&P500 (XM US500)',
+        unit: 'pt(ドル)',
+        currency: 'USD',
+        contractSize: 1,
+        leverage: 500,
+        defaultPrice: 5850,
+        defaultDistance: 200,
+        sliderMax: 1000,
+        sliderStep: 5,
+        presets: [
+          { label: 'XM現物 US500 (1Lot=1ドル/pt)', contractSize: 1, leverage: 500 },
+          { label: '1Lot=10ドル/pt', contractSize: 10, leverage: 500 }
+        ]
+      },
+      XAUUSD: {
+        name: '🥇 ゴールド',
+        fullName: 'ゴールド (XM GOLD)',
+        unit: 'ドル',
+        currency: 'USD',
+        contractSize: 100, // 100 oz
+        leverage: 1000,
+        defaultPrice: 2700,
+        defaultDistance: 30,
+        sliderMax: 150,
+        sliderStep: 1,
+        presets: [
+          { label: 'XMスタンダード (1Lot=100oz)', contractSize: 100, leverage: 1000 },
+          { label: 'XMマイクロ (1Lot=1oz)', contractSize: 1, leverage: 1000 }
+        ]
+      },
+      USOIL: {
+        name: '🛢️ WTI原油',
+        fullName: 'WTI原油 (XM OIL)',
+        unit: 'ドル',
+        currency: 'USD',
+        contractSize: 100, // XM OILCash 1lot = 100 barrels
+        leverage: 66.7,
+        defaultPrice: 72.0,
+        defaultDistance: 5.0,
+        sliderMax: 20,
+        sliderStep: 0.5,
+        presets: [
+          { label: 'XM OIL (1Lot=100バレル/66.7倍)', contractSize: 100, leverage: 66.7 },
+          { label: 'XM OIL (レバ200倍計算)', contractSize: 100, leverage: 200 },
+          { label: '1000バレル標準 (他社)', contractSize: 1000, leverage: 500 }
+        ]
+      },
+      CROSS_JPY: {
+        name: '💴 クロス円FX',
+        fullName: 'クロス円 (USD/JPY, AUD/JPY等)',
+        unit: '円',
+        currency: 'JPY',
+        contractSize: 100000, // 100,000 currency units
+        leverage: 1000,
+        defaultPrice: 150.0,
+        defaultDistance: 2.0,
+        sliderMax: 10,
+        sliderStep: 0.1,
+        presets: [
+          { label: 'XMスタンダード (1Lot=10万通貨)', contractSize: 100000, leverage: 1000 },
+          { label: 'XMマイクロ (1Lot=1000通貨)', contractSize: 1000, leverage: 1000 }
+        ]
+      }
+    };
+
+    function getAllInstruments() {
+      return Object.assign({}, BASE_INSTRUMENTS, appState.lotCalc.customInstruments || {});
+    }
+
+    // ================= INITIALIZATION & PERSISTENCE =================
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState = Object.assign({}, appState, parsed);
+          if (parsed.lotCalc) {
+            appState.lotCalc = Object.assign({}, appState.lotCalc, parsed.lotCalc);
+          }
+          if (parsed.tax) {
+            appState.tax = Object.assign({}, appState.tax, parsed.tax);
+          }
+        }
+      } catch (e) {
+        console.error('State load error:', e);
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {
+        console.error('State save error:', e);
+      }
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 2400);
+    }
+
+    // ================= FORMATTING & PRIVACY MASK =================
+    function formatJPY(amount, showPlus = false) {
+      if (appState.privacyMask) return '¥***,***';
+      const n = Math.round(Number(amount) || 0);
+      const absStr = Math.abs(n).toLocaleString('ja-JP');
+      if (n > 0 && showPlus) return `+¥${absStr}`;
+      if (n < 0) return `-¥${absStr}`;
+      return `¥${absStr}`;
+    }
+
+    function formatCompactJPY(amount) {
+      if (appState.privacyMask) return '***';
+      const n = Math.round(Number(amount) || 0);
+      if (n === 0) return '0';
+      const sign = n > 0 ? '+' : '-';
+      const abs = Math.abs(n);
+      if (abs >= 10000) {
+        const man = (abs / 10000);
+        return `${sign}${Number.isInteger(man) ? man : man.toFixed(1)}万`;
+      }
+      return `${sign}${abs.toLocaleString('ja-JP')}`;
+    }
+
+    function togglePrivacy() {
+      appState.privacyMask = !appState.privacyMask;
+      document.getElementById('iconPrivacy').textContent = appState.privacyMask ? '🙈' : '👁️';
+      saveState();
+      renderAll();
+      showToast(appState.privacyMask ? '金額モザイクをONにしました' : '金額モザイクを解除しました');
+    }
+
+    function toggleTaxMode() {
+      appState.taxMode = appState.taxMode === 'gross' ? 'net' : 'gross';
+      saveState();
+      updateHeaderControls();
+      renderCalendarAndStats();
+      showToast(appState.taxMode === 'net' ? '手取り(税引後)表示に切り替えました' : '税引前表示に切り替えました');
+    }
+
+    function updateHeaderControls() {
+      document.getElementById('ironRuleText').textContent = appState.ironRule;
+      document.getElementById('iconPrivacy').textContent = appState.privacyMask ? '🙈' : '👁️';
+
+      const lblGross = document.getElementById('lblGross');
+      const lblNet = document.getElementById('lblNet');
+      const badges = document.querySelectorAll('.tax-mode-badge');
+
+      if (appState.taxMode === 'gross') {
+        lblGross.className = 'px-2 py-0.5 rounded-full bg-orange-500 text-slate-950 transition-all';
+        lblNet.className = 'px-2 py-0.5 rounded-full text-slate-400 transition-all';
+        badges.forEach(b => { b.textContent = '(税引前)'; b.className = 'tax-mode-badge text-[10px] ml-0.5 text-orange-400 font-bold'; });
+      } else {
+        lblGross.className = 'px-2 py-0.5 rounded-full text-slate-400 transition-all';
+        lblNet.className = 'px-2 py-0.5 rounded-full bg-emerald-400 text-slate-950 transition-all';
+        badges.forEach(b => { b.textContent = '(税引後手取り)'; b.className = 'tax-mode-badge text-[10px] ml-0.5 text-emerald-400 font-bold'; });
+      }
+    }
+
+    // ================= NAVIGATION =================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-section').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-orange-400', 'font-bold');
+        btn.classList.add('text-slate-400', 'font-medium');
+      });
+      const activeBtn = document.getElementById(`nav-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400', 'font-medium');
+        activeBtn.classList.add('text-orange-400', 'font-bold');
+      }
+
+      if (tabId === 'portfolio') {
+        renderPortfolio();
+        updateCompoundSim();
+      } else if (tabId === 'lotcalc') {
+        calculateEnduranceLot();
+      } else if (tabId === 'settings') {
+        calculateTaxEstimate();
+      }
+    }
+
+    // ================= TAB 1: CALENDAR & STATS & TAX NET RATIO =================
+    function getEffectiveTaxMultiplier() {
+      if (appState.taxMode === 'gross') return 1.0;
+      const taxInfo = computeTaxNumbers();
+      if (taxInfo.tradeProfit <= 0) return 1.0;
+      const netRatio = Math.max(0.1, (taxInfo.tradeProfit - taxInfo.additionalTax) / taxInfo.tradeProfit);
+      return netRatio;
+    }
+
+    function changeMonth(delta) {
+      appState.currentMonth += delta;
+      if (appState.currentMonth > 12) {
+        appState.currentMonth = 1;
+        appState.currentYear++;
+      } else if (appState.currentMonth < 1) {
+        appState.currentMonth = 12;
+        appState.currentYear--;
+      }
+      saveState();
+      renderCalendarAndStats();
+    }
+
+    function renderCalendarAndStats() {
+      const year = appState.currentYear;
+      const month = appState.currentMonth;
+      const mult = getEffectiveTaxMultiplier();
+
+      document.getElementById('targetYearLabel').textContent = year;
+      document.getElementById('currentMonthLabel').textContent = `${year}年 ${month}月`;
+
+      // Calculate Annual & Monthly Totals
+      let annualGross = 0;
+      let monthlyGross = 0;
+      let winCount = 0, lossCount = 0;
+      let grossProfitSum = 0, grossLossSum = 0;
+      const monthEntries = [];
+
+      const ymPrefix = `${year}-${String(month).padStart(2, '0')}`;
+      const yPrefix = `${year}-`;
+
+      Object.keys(appState.trades).sort().forEach(dateKey => {
+        const entry = appState.trades[dateKey];
+        if (!entry) return;
+        const pnl = Number(entry.pnl) || 0;
+
+        if (dateKey.startsWith(yPrefix)) {
+          annualGross += pnl;
+        }
+        if (dateKey.startsWith(ymPrefix)) {
+          monthlyGross += pnl;
+          if (pnl > 0) {
+            winCount++;
+            grossProfitSum += pnl;
+          } else if (pnl < 0) {
+            lossCount++;
+            grossLossSum += Math.abs(pnl);
+          }
+          if (pnl !== 0 || (entry.memo && entry.memo.trim() !== '')) {
+            monthEntries.push({ dateKey, pnl, memo: entry.memo || '' });
+          }
+        }
+      });
+
+      const displayAnnual = annualGross > 0 ? annualGross * mult : annualGross;
+      const displayMonthly = monthlyGross > 0 ? monthlyGross * mult : monthlyGross;
+
+      // Update Annual Progress Bar
+      const target = Math.max(1, Number(appState.annualTarget) || 1000000);
+      const pct = Math.max(0, Math.min(100, (displayAnnual / target) * 100));
+      document.getElementById('annualProgressPct').textContent = `${pct.toFixed(1)}%`;
+      document.getElementById('annualProgressBar').style.width = `${pct}%`;
+      document.getElementById('annualCurrentProfit').textContent = formatJPY(displayAnnual, true);
+      document.getElementById('annualTargetDisplay').textContent = formatJPY(target);
+      const remaining = Math.max(0, target - displayAnnual);
+      document.getElementById('annualRemainingText').textContent =
+        remaining === 0 ? '🎉達成！' : `(あと${formatJPY(remaining)})`;
+
+      // Update Monthly Big P&L
+      const monthlyEl = document.getElementById('monthlyTotalPnL');
+      monthlyEl.textContent = formatJPY(displayMonthly, true);
+      monthlyEl.className = `text-3xl font-black tracking-tight ${
+        displayMonthly > 0 ? 'text-emerald-400' : displayMonthly < 0 ? 'text-rose-400' : 'text-slate-100'
+      }`;
+
+      // Update Mini Stats
+      const totalTrades = winCount + lossCount;
+      const winRate = totalTrades > 0 ? Math.round((winCount / totalTrades) * 100) : 0;
+      const pf = grossLossSum > 0 ? (grossProfitSum / grossLossSum).toFixed(2) : (grossProfitSum > 0 ? '∞' : '-');
+      const avgWin = winCount > 0 ? (grossProfitSum * mult) / winCount : 0;
+      const avgLoss = lossCount > 0 ? -(grossLossSum / lossCount) : 0;
+
+      document.getElementById('statWinRate').textContent = `${winRate}%`;
+      document.getElementById('statWinLossCount').textContent = `${winCount}勝${lossCount}敗`;
+      document.getElementById('statPF').textContent = pf;
+      document.getElementById('statAvgWin').textContent = formatCompactJPY(avgWin);
+      document.getElementById('statAvgLoss').textContent = formatCompactJPY(avgLoss);
+
+      // Build Calendar Grid
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+
+      const firstDay = new Date(year, month - 1, 1).getDay();
+      const daysInMonth = new Date(year, month, 0).getDate();
+
+      for (let i = 0; i < firstDay; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'h-14 rounded-xl bg-slate-900/30';
+        grid.appendChild(blank);
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const entry = appState.trades[dateKey];
+        const rawPnl = entry ? Number(entry.pnl) || 0 : 0;
+        const adjPnl = rawPnl > 0 ? rawPnl * mult : rawPnl;
+        const hasMemo = entry && entry.memo && entry.memo.trim().length > 0;
+
+        let cardStyle = 'bg-slate-800/60 border-slate-700/60 text-slate-300 hover:border-slate-500';
+        let pnlColor = 'text-slate-400';
+
+        if (rawPnl > 0) {
+          cardStyle = 'bg-emerald-950/60 border-emerald-500/50 text-emerald-200 hover:border-emerald-400';
+          pnlColor = 'text-emerald-400';
+        } else if (rawPnl < 0) {
+          cardStyle = 'bg-rose-950/60 border-rose-500/50 text-rose-200 hover:border-rose-400';
+          pnlColor = 'text-rose-400';
+        }
+
+        const cell = document.createElement('button');
+        cell.className = `h-14 rounded-xl border p-1 flex flex-col justify-between items-center relative active:scale-95 transition ${cardStyle}`;
+        cell.onclick = () => openDayModal(dateKey, d);
+
+        cell.innerHTML = `
+          <div class="w-full flex items-center justify-between px-0.5">
+            <span class="text-[10px] font-bold leading-none">${d}</span>
+            ${hasMemo ? '<span class="w-1.5 h-1.5 rounded-full bg-orange-400" title="メモあり"></span>' : ''}
+          </div>
+          <div class="text-[10px] font-extrabold tracking-tighter truncate w-full text-center ${pnlColor}">
+            ${rawPnl !== 0 ? formatCompactJPY(adjPnl) : (hasMemo ? '📝' : '-')}
+          </div>
+          <div class="h-0.5"></div>
+        `;
+        grid.appendChild(cell);
+      }
+
+      // Render Memo List below Calendar
+      const memoContainer = document.getElementById('monthlyMemoList');
+      if (monthEntries.length === 0) {
+        memoContainer.innerHTML = `<div class="text-xs text-slate-500 text-center py-3">今月のトレード記録はまだありません。カレンダーの日付をタップして入力できます✨</div>`;
+      } else {
+        memoContainer.innerHTML = monthEntries.reverse().map(item => {
+          const adj = item.pnl > 0 ? item.pnl * mult : item.pnl;
+          const badgeCls = item.pnl > 0 ? 'text-emerald-400 bg-emerald-950/80 border-emerald-500/30' : item.pnl < 0 ? 'text-rose-400 bg-rose-950/80 border-rose-500/30' : 'text-slate-300 bg-slate-800 border-slate-700';
+          return `
+            <div onclick="openDayModal('${item.dateKey}')" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800/80 border border-slate-800 rounded-xl p-2.5 flex items-start justify-between gap-2 transition">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-xs font-bold text-slate-300">${item.dateKey.slice(5).replace('-', '/')}</span>
+                  <span class="text-xs font-extrabold px-2 py-0.5 rounded-md border ${badgeCls}">${formatJPY(adj, true)}</span>
+                </div>
+                ${item.memo ? `<p class="text-xs text-slate-300 mt-1 break-words">${escapeHtml(item.memo)}</p>` : ''}
+              </div>
+              <span class="text-xs text-slate-500 shrink-0">✎</span>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // ================= TAB 2: XM 20% STOP-OUT ENDURANCE LOT & P&L CALCULATOR =================
+    function toggleBrokerConfig() {
+      const panel = document.getElementById('brokerConfigPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    function renderInstrumentButtons() {
+      const all = getAllInstruments();
+      const grid = document.getElementById('instrumentPresetGrid');
+      const currentKey = appState.lotCalc.instrument;
+
+      grid.innerHTML = Object.keys(all).map(key => {
+        const item = all[key];
+        const isActive = key === currentKey;
+        const isCustom = !BASE_INSTRUMENTS[key];
+        const cls = isActive
+          ? 'inst-btn py-2 px-2 rounded-xl text-xs font-black border bg-orange-500/20 border-orange-400 text-orange-300 shadow-sm transition flex items-center justify-center gap-1'
+          : 'inst-btn py-2 px-2 rounded-xl text-xs font-bold border bg-slate-800/80 border-slate-700 text-slate-300 hover:bg-slate-700 transition flex items-center justify-center gap-1';
+        return `
+          <button onclick="selectInstrument('${key}')" data-inst="${key}" class="${cls}">
+            <span class="truncate">${escapeHtml(item.name)}</span>
+            ${isCustom ? `<span onclick="event.stopPropagation(); deleteCustomInstrument('${key}')" class="text-[10px] text-rose-400 hover:text-rose-200 ml-0.5" title="削除">✕</span>` : ''}
+          </button>
+        `;
+      }).join('');
+    }
+
+    function getActiveInstConfig(instKey) {
+      const all = getAllInstruments();
+      const base = all[instKey] || BASE_INSTRUMENTS.JP225;
+      const ov = (appState.lotCalc.overrides && appState.lotCalc.overrides[instKey]) || {};
+      return {
+        ...base,
+        contractSize: ov.contractSize !== undefined ? Number(ov.contractSize) : base.contractSize,
+        leverage: ov.leverage !== undefined ? Number(ov.leverage) : base.leverage
+      };
+    }
+
+    function selectInstrument(instKey) {
+      const all = getAllInstruments();
+      if (!all[instKey]) instKey = 'JP225';
+      appState.lotCalc.instrument = instKey;
+
+      renderInstrumentButtons();
+      const info = getActiveInstConfig(instKey);
+
+      // Show or hide USD/JPY quick bar for USD-denominated CFDs (like Nasdaq US100, Gold, Oil)
+      const usdBar = document.getElementById('usdJpyQuickBar');
+      if (info.currency === 'USD') {
+        usdBar.classList.remove('hidden');
+      } else {
+        usdBar.classList.add('hidden');
+      }
+
+      const fxRate = Number(appState.lotCalc.usdJpy) || 150;
+      document.getElementById('quickUsdJpyInput').value = fxRate;
+      document.getElementById('inputUsdJpyRate').value = fxRate;
+
+      // Set unit labels
+      document.querySelectorAll('.unit-label').forEach(el => el.textContent = info.unit);
+      document.getElementById('brokerPresetHint').textContent = info.fullName || info.name;
+
+      // Render quick multiplier preset buttons
+      const presetWrap = document.getElementById('quickMultiplierButtons');
+      if (info.presets && info.presets.length > 0) {
+        presetWrap.innerHTML = info.presets.map(p => `
+          <button onclick="applyInstPreset(${p.contractSize}, ${p.leverage})" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-[10px] font-bold text-orange-300">
+            ${p.label}
+          </button>
+        `).join('');
+      } else {
+        presetWrap.innerHTML = '';
+      }
+
+      // Populate config inputs
+      document.getElementById('inputContractSize').value = info.contractSize;
+      document.getElementById('inputLeverage').value = info.leverage;
+      document.getElementById('inputStopOutPct').value = appState.lotCalc.stopOutPct !== undefined ? appState.lotCalc.stopOutPct : 20;
+
+      // Load defaults for price and distance
+      document.getElementById('calcCurrentPrice').value = info.defaultPrice;
+      document.getElementById('calcEndureDistance').value = info.defaultDistance;
+      document.getElementById('calcTargetStopPrice').value = +(info.defaultPrice - info.defaultDistance).toFixed(4);
+
+      // Update slider range for step 2
+      const slider = document.getElementById('simMoveSlider');
+      slider.max = info.sliderMax || 2000;
+      slider.step = info.sliderStep || 10;
+      const halfDist = +(info.defaultDistance / 2).toFixed(2);
+      slider.value = halfDist;
+      document.getElementById('simMoveDistance').value = halfDist;
+
+      saveState();
+      calculateEnduranceLot();
+    }
+
+    function applyInstPreset(contractSize, leverage) {
+      const inst = appState.lotCalc.instrument;
+      if (!appState.lotCalc.overrides) appState.lotCalc.overrides = {};
+      appState.lotCalc.overrides[inst] = { contractSize, leverage };
+      document.getElementById('inputContractSize').value = contractSize;
+      document.getElementById('inputLeverage').value = leverage;
+      saveState();
+      calculateEnduranceLot();
+      showToast('銘柄プリセットを反映しました');
+    }
+
+    function setLeverageQuick(lev) {
+      document.getElementById('inputLeverage').value = lev;
+      onBrokerParamInput();
+    }
+
+    function onBrokerParamInput() {
+      const inst = appState.lotCalc.instrument;
+      const contractSize = Math.max(0.0001, Number(document.getElementById('inputContractSize').value) || 1);
+      const leverage = Math.max(1, Number(document.getElementById('inputLeverage').value) || 500);
+      const stopOutPct = Math.max(0, Math.min(100, Number(document.getElementById('inputStopOutPct').value) || 20));
+
+      if (!appState.lotCalc.overrides) appState.lotCalc.overrides = {};
+      appState.lotCalc.overrides[inst] = { contractSize, leverage };
+      appState.lotCalc.stopOutPct = stopOutPct;
+
+      saveState();
+      calculateEnduranceLot();
+    }
+
+    function syncUsdJpyRate(val) {
+      const rate = Math.max(1, Number(val) || 150);
+      appState.lotCalc.usdJpy = rate;
+      document.getElementById('quickUsdJpyInput').value = rate;
+      document.getElementById('inputUsdJpyRate').value = rate;
+      saveState();
+      calculateEnduranceLot();
+    }
+
+    function setEquityQuick(val) {
+      document.getElementById('calcEquity').value = val;
+      calculateEnduranceLot();
+    }
+
+    function onCurrentPriceChange() {
+      const cur = Number(document.getElementById('calcCurrentPrice').value) || 0;
+      const dist = Number(document.getElementById('calcEndureDistance').value) || 0;
+      document.getElementById('calcTargetStopPrice').value = +(cur - dist).toFixed(4);
+      calculateEnduranceLot();
+    }
+
+    function onDistanceInput() {
+      const cur = Number(document.getElementById('calcCurrentPrice').value) || 0;
+      const dist = Math.abs(Number(document.getElementById('calcEndureDistance').value) || 0);
+      document.getElementById('calcTargetStopPrice').value = +(cur - dist).toFixed(4);
+      calculateEnduranceLot();
+    }
+
+    function onStopPriceInput() {
+      const cur = Number(document.getElementById('calcCurrentPrice').value) || 0;
+      const stop = Number(document.getElementById('calcTargetStopPrice').value) || 0;
+      const dist = Math.abs(cur - stop);
+      document.getElementById('calcEndureDistance').value = +dist.toFixed(4);
+      calculateEnduranceLot();
+    }
+
+    function calculateEnduranceLot() {
+      const instKey = appState.lotCalc.instrument;
+      const info = getActiveInstConfig(instKey);
+
+      const equity = Math.max(0, Number(document.getElementById('calcEquity').value) || 0);
+      const curPrice = Math.max(0.0001, Number(document.getElementById('calcCurrentPrice').value) || 0);
+      const distance = Math.max(0.0001, Math.abs(Number(document.getElementById('calcEndureDistance').value) || 1));
+
+      const contractSize = Math.max(0.0001, Number(document.getElementById('inputContractSize').value) || info.contractSize);
+      const leverage = Math.max(1, Number(document.getElementById('inputLeverage').value) || info.leverage);
+      const stopOutPct = Math.max(0, Number(document.getElementById('inputStopOutPct').value) ?? 20);
+      const fxRate = info.currency === 'USD' ? (Number(appState.lotCalc.usdJpy) || 150) : 1;
+
+      // 1 Lot value change in JPY when price moves by 1 unit
+      const yenPerUnitPerLot = contractSize * fxRate;
+      window._currentYenPerUnitPerLot = yenPerUnitPerLot;
+
+      // Required Margin per 1.00 Lot in JPY: (CurrentPrice * ContractSize * FXRate) / Leverage
+      const marginPerOneLot = (curPrice * contractSize * fxRate) / leverage;
+
+      // Loss per 1.00 Lot in JPY when price moves against position by `distance`
+      const lossPerOneLot = distance * yenPerUnitPerLot;
+
+      // XM Stop-Out Formula:
+      // Stop-out happens when: Equity - L * lossPerOneLot = (stopOutPct / 100) * L * marginPerOneLot
+      // => L_max = Equity / (lossPerOneLot + (stopOutPct / 100) * marginPerOneLot)
+      const stopOutRatio = stopOutPct / 100;
+      const costPerLotAtStopOut = lossPerOneLot + (stopOutRatio * marginPerOneLot);
+
+      const maxLotRaw = costPerLotAtStopOut > 0 ? (equity / costPerLotAtStopOut) : 0;
+      const maxLot = Math.floor(maxLotRaw * 100) / 100;
+
+      // Safe (10% equity risk) and Standard (30% equity risk)
+      const safeLot = Math.floor(((equity * 0.10) / lossPerOneLot) * 100) / 100;
+      const stdLot = Math.floor(((equity * 0.30) / lossPerOneLot) * 100) / 100;
+
+      const totalReqMarginAtMax = Math.round(maxLot * marginPerOneLot);
+      const stopOutRemainingEquity = Math.round(totalReqMarginAtMax * stopOutRatio);
+      const maxAllowableLoss = Math.round(maxLot * lossPerOneLot);
+
+      document.getElementById('lblStopOutBadge').textContent = stopOutPct;
+      document.getElementById('currentCalcBasisText').textContent =
+        `1lotで1${info.unit}動くと±${Math.round(yenPerUnitPerLot).toLocaleString('ja-JP')}円 / レバ${leverage}倍・維持率${stopOutPct}%`;
+
+      const stopPrice = +(curPrice - distance).toFixed(4);
+      document.getElementById('stopPricePreview').textContent = `逆行限界価格: ${stopPrice.toLocaleString('ja-JP')}`;
+
+      window._calculatedTiers = {
+        safe: Math.max(0.01, safeLot),
+        standard: Math.max(0.01, stdLot),
+        max: Math.max(0.01, maxLot)
+      };
+
+      document.getElementById('resultMaxLot').textContent = maxLot.toFixed(2);
+      document.getElementById('resultMaxLotDesc').textContent =
+        `${maxLot.toFixed(2)} lot なら ${distance.toLocaleString('ja-JP')}${info.unit} 逆行しても維持率${stopOutPct}%を割らずに耐えられます`;
+
+      document.getElementById('xmRequiredMarginText').textContent = formatJPY(totalReqMarginAtMax);
+      document.getElementById('xmStopOutEquityText').textContent = formatJPY(stopOutRemainingEquity);
+      document.getElementById('xmMaxLossText').textContent = formatJPY(-maxAllowableLoss);
+
+      document.getElementById('tierSafeLot').textContent = `${safeLot.toFixed(2)} lot`;
+      document.getElementById('tierSafeRisk').textContent = formatJPY(-Math.round(safeLot * lossPerOneLot));
+      document.getElementById('tierStdLot').textContent = `${stdLot.toFixed(2)} lot`;
+      document.getElementById('tierStdRisk').textContent = formatJPY(-Math.round(stdLot * lossPerOneLot));
+      document.getElementById('tierMaxLot').textContent = `${maxLot.toFixed(2)} lot`;
+      document.getElementById('tierMaxRisk').textContent = formatJPY(-maxAllowableLoss);
+
+      // Sync to simulator below
+      document.getElementById('simLotInput').value = maxLot > 0 ? maxLot.toFixed(2) : '0.01';
+      updatePnLSimulation();
+    }
+
+    function applyTierLot(tier) {
+      if (!window._calculatedTiers) return;
+      const lot = window._calculatedTiers[tier] || 0.01;
+      document.getElementById('simLotInput').value = lot.toFixed(2);
+      updatePnLSimulation();
+      showToast(`シミュレーターに ${lot.toFixed(2)} lot をセットしました`);
+    }
+
+    function adjustSimLot(delta) {
+      const input = document.getElementById('simLotInput');
+      const next = Math.max(0.01, +(Number(input.value || 0) + delta).toFixed(2));
+      input.value = next.toFixed(2);
+      updatePnLSimulation();
+    }
+
+    function syncSimInputFromSlider() {
+      document.getElementById('simMoveDistance').value = document.getElementById('simMoveSlider').value;
+      updatePnLSimulation();
+    }
+
+    function syncSimSliderFromInput() {
+      document.getElementById('simMoveSlider').value = document.getElementById('simMoveDistance').value;
+      updatePnLSimulation();
+    }
+
+    function updatePnLSimulation() {
+      const lot = Math.max(0, Number(document.getElementById('simLotInput').value) || 0);
+      const move = Math.abs(Number(document.getElementById('simMoveDistance').value) || 0);
+      const curPrice = Number(document.getElementById('calcCurrentPrice').value) || 0;
+      const yenPerUnitPerLot = window._currentYenPerUnitPerLot || 100;
+      const inst = appState.lotCalc.instrument;
+      const info = getActiveInstConfig(inst);
+
+      const projectedPnL = Math.round(lot * move * yenPerUnitPerLot);
+
+      document.querySelectorAll('.sim-move-label').forEach((el, idx) => {
+        el.textContent = `${idx === 0 ? '+' : '-'}${move.toLocaleString('ja-JP')}${info.unit}`;
+      });
+
+      document.getElementById('simProfitOutput').textContent = formatJPY(projectedPnL, true);
+      document.getElementById('simLossOutput').textContent = formatJPY(-projectedPnL, false);
+      document.getElementById('simTargetWinPrice').textContent = `到達価格: ${(curPrice + move).toLocaleString('ja-JP')}`;
+      document.getElementById('simTargetLossPrice').textContent = `逆行価格: ${(curPrice - move).toLocaleString('ja-JP')}`;
+    }
+
+    // Custom Instrument Modal Handlers
+    function openCustomInstModal() {
+      document.getElementById('customInstName').value = '';
+      document.getElementById('customInstCurrency').value = 'USD';
+      document.getElementById('customInstContract').value = '1';
+      document.getElementById('customInstPrice').value = '20000';
+      document.getElementById('customInstLeverage').value = '500';
+      document.getElementById('customInstModal').classList.remove('hidden');
+    }
+
+    function closeCustomInstModal() {
+      document.getElementById('customInstModal').classList.add('hidden');
+    }
+
+    function saveCustomInstrument() {
+      const name = document.getElementById('customInstName').value.trim();
+      if (!name) {
+        showToast('銘柄名を入力してください');
+        return;
+      }
+      const currency = document.getElementById('customInstCurrency').value;
+      const contractSize = Math.max(0.0001, Number(document.getElementById('customInstContract').value) || 1);
+      const defaultPrice = Math.max(0.0001, Number(document.getElementById('customInstPrice').value) || 1000);
+      const leverage = Math.max(1, Number(document.getElementById('customInstLeverage').value) || 500);
+
+      const key = 'CUST_' + Date.now();
+      if (!appState.lotCalc.customInstruments) appState.lotCalc.customInstruments = {};
+      appState.lotCalc.customInstruments[key] = {
+        name: name,
+        fullName: name,
+        unit: currency === 'USD' ? 'pt(ドル)' : '円',
+        currency: currency,
+        contractSize: contractSize,
+        leverage: leverage,
+        defaultPrice: defaultPrice,
+        defaultDistance: Math.max(1, Math.round(defaultPrice * 0.05)),
+        sliderMax: Math.max(10, Math.round(defaultPrice * 0.15)),
+        sliderStep: 1,
+        presets: []
+      };
+
+      saveState();
+      closeCustomInstModal();
+      selectInstrument(key);
+      showToast(`「${name}」を追加しました！`);
+    }
+
+    function deleteCustomInstrument(key) {
+      if (appState.lotCalc.customInstruments && appState.lotCalc.customInstruments[key]) {
+        delete appState.lotCalc.customInstruments[key];
+        if (appState.lotCalc.instrument === key) {
+          appState.lotCalc.instrument = 'JP225';
+        }
+        saveState();
+        selectInstrument(appState.lotCalc.instrument);
+        showToast('カスタム銘柄を削除しました');
+      }
+    }
+
+    function openDayModal(dateKey, dayNum) {
+      selectedDateKey = dateKey;
+      const [y, m, d] = dateKey.split('-').map(Number);
+      const weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+      const dow = weekdays[new Date(y, m - 1, d).getDay()];
+      document.getElementById('modalDateTitle').textContent = `${y}年${m}月${d}日 (${dow})`;
+
+      const existing = appState.trades[dateKey] || { pnl: '', memo: '' };
+      document.getElementById('modalPnLInput').value = existing.pnl !== undefined && existing.pnl !== 0 ? existing.pnl : '';
+      document.getElementById('modalMemoInput').value = existing.memo || '';
+      document.getElementById('dayEntryModal').classList.remove('hidden');
+    }
+
+    function closeDayModal() {
+      document.getElementById('dayEntryModal').classList.add('hidden');
+    }
+
+    function addModalPnL(delta) {
+      const input = document.getElementById('modalPnLInput');
+      const current = Number(input.value) || 0;
+      input.value = current + delta;
+    }
+
+    function setModalPnL(val) {
+      document.getElementById('modalPnLInput').value = val === 0 ? '' : val;
+    }
+
+    function saveDayEntry() {
+      if (!selectedDateKey) return;
+      const pnlVal = Number(document.getElementById('modalPnLInput').value) || 0;
+      const memoVal = document.getElementById('modalMemoInput').value.trim();
+
+      if (pnlVal === 0 && memoVal === '') {
+        delete appState.trades[selectedDateKey];
+      } else {
+        appState.trades[selectedDateKey] = { pnl: pnlVal, memo: memoVal };
+      }
+      saveState();
+      closeDayModal();
+      renderCalendarAndStats();
+      showToast('収支・メモを保存しました！');
+    }
+
+    function deleteDayEntry() {
+      if (!selectedDateKey) return;
+      delete appState.trades[selectedDateKey];
+      saveState();
+      closeDayModal();
+      renderCalendarAndStats();
+      showToast('記録を削除しました');
+    }
+
+    // ================= TAB 3: PORTFOLIO & COMPOUND SIMULATOR =================
+    const PIE_COLORS = ['#10b981', '#14b8a6', '#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#f59e0b'];
+
+    function renderPortfolio() {
+      const list = appState.portfolio || [];
+      let totalVal = 0, totalPrin = 0, totalMonthly = 0;
+      list.forEach(item => {
+        totalVal += Number(item.value) || 0;
+        totalPrin += Number(item.principal) || 0;
+        totalMonthly += Number(item.monthly) || 0;
+      });
+
+      const gain = totalVal - totalPrin;
+      const gainPct = totalPrin > 0 ? ((gain / totalPrin) * 100).toFixed(2) : '0.00';
+
+      document.getElementById('pfTotalValue').textContent = formatJPY(totalVal);
+      document.getElementById('pfTotalPrincipal').textContent = formatJPY(totalPrin);
+      const gainEl = document.getElementById('pfTotalGain');
+      gainEl.textContent = `${formatJPY(gain, true)} (${gain >= 0 ? '+' : ''}${gainPct}%)`;
+      gainEl.className = `font-extrabold ${gain >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+      document.getElementById('pfTotalMonthly').textContent = `毎月 ${formatJPY(totalMonthly)}`;
+
+      // Draw Rakuten-style Pie Chart
+      const svg = document.getElementById('portfolioPieSvg');
+      svg.innerHTML = '';
+      const cx = 130, cy = 130, r = 105;
+
+      if (list.length === 0 || totalVal <= 0) {
+        svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#1e293b" stroke="#334155" stroke-width="2"></circle>
+                         <text x="${cx}" y="${cy}" text-anchor="middle" fill="#94a3b8" font-size="12" font-weight="bold">銘柄を追加してください</text>`;
+      } else if (list.length === 1) {
+        svg.innerHTML = `
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="${PIE_COLORS[0]}"></circle>
+          <text x="${cx}" y="${cy - 6}" text-anchor="middle" fill="#0f172a" font-size="18" font-weight="900">100%</text>
+          <text x="${cx}" y="${cy + 14}" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="700">${escapeHtml(list[0].name)}</text>
+        `;
+      } else {
+        let startAngle = -Math.PI / 2;
+        list.forEach((item, idx) => {
+          const val = Math.max(0, Number(item.value) || 0);
+          if (val <= 0) return;
+          const ratio = val / totalVal;
+          const angle = ratio * Math.PI * 2;
+          const endAngle = startAngle + angle;
+
+          const x1 = cx + r * Math.cos(startAngle);
+          const y1 = cy + r * Math.sin(startAngle);
+          const x2 = cx + r * Math.cos(endAngle);
+          const y2 = cy + r * Math.sin(endAngle);
+          const largeArc = angle > Math.PI ? 1 : 0;
+          const color = PIE_COLORS[idx % PIE_COLORS.length];
+
+          const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} Z`;
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', pathData);
+          path.setAttribute('fill', color);
+          path.setAttribute('stroke', '#0f172a');
+          path.setAttribute('stroke-width', '2');
+          svg.appendChild(path);
+
+          // Label inside slice if >= 8%
+          if (ratio >= 0.08) {
+            const midAngle = startAngle + angle / 2;
+            const lx = cx + (r * 0.62) * Math.cos(midAngle);
+            const ly = cy + (r * 0.62) * Math.sin(midAngle);
+            const pctText = `${Math.round(ratio * 100)}%`;
+            const shortName = item.name.length > 7 ? item.name.slice(0, 7) + '…' : item.name;
+
+            const t1 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            t1.setAttribute('x', lx);
+            t1.setAttribute('y', ly - 2);
+            t1.setAttribute('text-anchor', 'middle');
+            t1.setAttribute('fill', '#0f172a');
+            t1.setAttribute('font-size', '14');
+            t1.setAttribute('font-weight', '900');
+            t1.textContent = pctText;
+            svg.appendChild(t1);
+
+            const t2 = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            t2.setAttribute('x', lx);
+            t2.setAttribute('y', ly + 12);
+            t2.setAttribute('text-anchor', 'middle');
+            t2.setAttribute('fill', '#0f172a');
+            t2.setAttribute('font-size', '10');
+            t2.setAttribute('font-weight', '700');
+            t2.textContent = shortName;
+            svg.appendChild(t2);
+          }
+
+          startAngle = endAngle;
+        });
+      }
+
+      // Render Asset List cards
+      const listContainer = document.getElementById('portfolioAssetList');
+      listContainer.innerHTML = list.map((item, idx) => {
+        const val = Number(item.value) || 0;
+        const prin = Number(item.principal) || 0;
+        const itemGain = val - prin;
+        const itemPct = totalVal > 0 ? ((val / totalVal) * 100).toFixed(1) : '0.0';
+        const color = PIE_COLORS[idx % PIE_COLORS.length];
+
+        return `
+          <div onclick="openAssetModal('${item.id}')" class="cursor-pointer bg-slate-900/90 hover:bg-slate-800 border border-slate-800 rounded-xl p-3 flex items-center justify-between transition">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-3 h-8 rounded-full shrink-0" style="background:${color}"></span>
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-black text-white truncate">${escapeHtml(item.name)}</span>
+                  <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.2 rounded font-bold">${itemPct}%</span>
+                </div>
+                <div class="text-[10px] text-slate-400 mt-0.5">
+                  元本 ${formatJPY(prin)} / 積立 月${formatJPY(item.monthly || 0)}
+                </div>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <div class="text-sm font-black text-white">${formatJPY(val)}</div>
+              <div class="text-[10px] font-bold ${itemGain >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                ${formatJPY(itemGain, true)}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openAssetModal(editId = null) {
+      document.getElementById('assetEditId').value = editId || '';
+      const delBtn = document.getElementById('btnDeleteAsset');
+      if (editId) {
+        const found = appState.portfolio.find(a => a.id === editId);
+        if (found) {
+          document.getElementById('assetNameInput').value = found.name;
+          document.getElementById('assetValueInput').value = found.value;
+          document.getElementById('assetPrincipalInput').value = found.principal;
+          document.getElementById('assetMonthlyInput').value = found.monthly || 0;
+          delBtn.classList.remove('hidden');
+        }
+      } else {
+        document.getElementById('assetNameInput').value = '';
+        document.getElementById('assetValueInput').value = '';
+        document.getElementById('assetPrincipalInput').value = '';
+        document.getElementById('assetMonthlyInput').value = '';
+        delBtn.classList.add('hidden');
+      }
+      document.getElementById('assetModal').classList.remove('hidden');
+    }
+
+    function closeAssetModal() {
+      document.getElementById('assetModal').classList.add('hidden');
+    }
+
+    function savePortfolioAsset() {
+      const editId = document.getElementById('assetEditId').value;
+      const name = document.getElementById('assetNameInput').value.trim() || 'インデックス投信';
+      const value = Number(document.getElementById('assetValueInput').value) || 0;
+      const principal = Number(document.getElementById('assetPrincipalInput').value) || 0;
+      const monthly = Number(document.getElementById('assetMonthlyInput').value) || 0;
+
+      if (editId) {
+        const idx = appState.portfolio.findIndex(a => a.id === editId);
+        if (idx !== -1) {
+          appState.portfolio[idx] = { id: editId, name, value, principal, monthly };
+        }
+      } else {
+        appState.portfolio.push({
+          id: 'pf_' + Date.now(),
+          name, value, principal, monthly
+        });
+      }
+      saveState();
+      closeAssetModal();
+      renderPortfolio();
+      showToast('ポートフォリオを更新しました！');
+    }
+
+    function deletePortfolioAsset() {
+      const editId = document.getElementById('assetEditId').value;
+      appState.portfolio = appState.portfolio.filter(a => a.id !== editId);
+      saveState();
+      closeAssetModal();
+      renderPortfolio();
+      showToast('銘柄を削除しました');
+    }
+
+    function syncCompoundFromPortfolio() {
+      let totalVal = 0, totalMonthly = 0;
+      appState.portfolio.forEach(a => {
+        totalVal += Number(a.value) || 0;
+        totalMonthly += Number(a.monthly) || 0;
+      });
+      const principalMan = Math.round(totalVal / 10000);
+      const monthlyMan = +(totalMonthly / 10000).toFixed(1);
+
+      document.getElementById('sliderCompPrincipal').value = Math.min(2000, principalMan);
+      document.getElementById('sliderCompMonthlyBefore').value = Math.min(30, monthlyMan);
+      document.getElementById('sliderCompMonthlyAfter').value = Math.min(30, +(monthlyMan + 2).toFixed(1));
+      updateCompoundSim();
+      showToast('現在のポートフォリオ合計を反映しました');
+    }
+
+    function updateCompoundSim() {
+      const principalMan = Number(document.getElementById('sliderCompPrincipal').value) || 0;
+      const monthlyBeforeMan = Number(document.getElementById('sliderCompMonthlyBefore').value) || 0;
+      const monthlyAfterMan = Number(document.getElementById('sliderCompMonthlyAfter').value) || 0;
+      const ratePct = Number(document.getElementById('sliderCompRate').value) || 5;
+      const years = Number(document.getElementById('sliderCompYears').value) || 20;
+
+      document.getElementById('lblCompPrincipal').textContent = `${principalMan.toLocaleString()}万円`;
+      document.getElementById('lblCompMonthlyBefore').textContent = `毎月 ${monthlyBeforeMan.toFixed(1)}万円`;
+      document.getElementById('lblCompMonthlyAfter').textContent = `毎月 ${monthlyAfterMan.toFixed(1)}万円`;
+      document.getElementById('lblCompRate').textContent = `${ratePct.toFixed(1)}%`;
+      document.getElementById('lblCompYears').textContent = `${years}年`;
+
+      const monthlyRate = (ratePct / 100) / 12;
+      const seriesBefore = [];
+      const seriesAfter = [];
+      const seriesAfterPrincipal = [];
+
+      let balBefore = principalMan;
+      let balAfter = principalMan;
+      let prinAfter = principalMan;
+
+      seriesBefore.push(balBefore);
+      seriesAfter.push(balAfter);
+      seriesAfterPrincipal.push(prinAfter);
+
+      for (let y = 1; y <= years; y++) {
+        for (let m = 0; m < 12; m++) {
+          balBefore = balBefore * (1 + monthlyRate) + monthlyBeforeMan;
+          balAfter = balAfter * (1 + monthlyRate) + monthlyAfterMan;
+          prinAfter += monthlyAfterMan;
+        }
+        seriesBefore.push(balBefore);
+        seriesAfter.push(balAfter);
+        seriesAfterPrincipal.push(prinAfter);
+      }
+
+      const finalBefore = Math.round(balBefore);
+      const finalAfter = Math.round(balAfter);
+      const finalPrinBefore = Math.round(principalMan + monthlyBeforeMan * 12 * years);
+      const finalPrinAfter = Math.round(prinAfter);
+      const diffMan = finalAfter - finalBefore;
+      const monthlyDiff = +(monthlyAfterMan - monthlyBeforeMan).toFixed(1);
+
+      document.getElementById('compDiffHeadline').textContent =
+        monthlyDiff >= 0
+          ? `月+${monthlyDiff}万円ペースを上げると、${years}年後に…`
+          : `月${monthlyDiff}万円ペースを下げると、${years}年後に…`;
+
+      document.getElementById('compDiffAmount').textContent =
+        appState.privacyMask ? '***万円' : `${diffMan >= 0 ? '+' : ''}${diffMan.toLocaleString()}万円 変わります！`;
+
+      document.getElementById('compBeforeTotal').textContent = appState.privacyMask ? '***万円' : `${finalBefore.toLocaleString()}万円`;
+      document.getElementById('compBeforePrincipal').textContent = `元本 ${finalPrinBefore.toLocaleString()}万円`;
+      document.getElementById('compAfterTotal').textContent = appState.privacyMask ? '***万円' : `${finalAfter.toLocaleString()}万円`;
+      document.getElementById('compAfterPrincipal').textContent = `元本 ${finalPrinAfter.toLocaleString()}万円`;
+
+      drawCompoundChart(seriesBefore, seriesAfter, seriesAfterPrincipal, years);
+    }
+
+    function drawCompoundChart(beforeArr, afterArr, prinArr, years) {
+      const svg = document.getElementById('compoundChartSvg');
+      const w = 360, h = 190, padL = 42, padR = 12, padT = 12, padB = 24;
+      const plotW = w - padL - padR;
+      const plotH = h - padT - padB;
+
+      const maxVal = Math.max(...beforeArr, ...afterArr, 100);
+      const xPos = (i) => padL + (i / years) * plotW;
+      const yPos = (v) => padT + plotH - (v / maxVal) * plotH;
+
+      const makePoints = (arr) => arr.map((v, i) => `${xPos(i).toFixed(1)},${yPos(v).toFixed(1)}`).join(' ');
+
+      const ptsBefore = makePoints(beforeArr);
+      const ptsAfter = makePoints(afterArr);
+      const ptsPrin = makePoints(prinArr);
+
+      const areaAfter = `${padL},${padT + plotH} ${ptsAfter} ${xPos(years).toFixed(1)},${padT + plotH}`;
+
+      svg.innerHTML = `
+        <!-- Grid lines -->
+        <line x1="${padL}" y1="${padT}" x2="${w - padR}" y2="${padT}" stroke="#334155" stroke-dasharray="3 3" stroke-width="1"/>
+        <line x1="${padL}" y1="${padT + plotH/2}" x2="${w - padR}" y2="${padT + plotH/2}" stroke="#334155" stroke-dasharray="3 3" stroke-width="1"/>
+        <line x1="${padL}" y1="${padT + plotH}" x2="${w - padR}" y2="${padT + plotH}" stroke="#475569" stroke-width="1"/>
+
+        <!-- Y-Axis Labels -->
+        <text x="${padL - 5}" y="${padT + 4}" text-anchor="end" fill="#94a3b8" font-size="9">${Math.round(maxVal)}万</text>
+        <text x="${padL - 5}" y="${padT + plotH/2 + 3}" text-anchor="end" fill="#94a3b8" font-size="9">${Math.round(maxVal/2)}万</text>
+        <text x="${padL - 5}" y="${padT + plotH}" text-anchor="end" fill="#94a3b8" font-size="9">0</text>
+
+        <!-- X-Axis Labels -->
+        <text x="${padL}" y="${h - 6}" text-anchor="middle" fill="#94a3b8" font-size="9">現在</text>
+        <text x="${xPos(Math.round(years/2))}" y="${h - 6}" text-anchor="middle" fill="#94a3b8" font-size="9">${Math.round(years/2)}年後</text>
+        <text x="${w - padR}" y="${h - 6}" text-anchor=" end" fill="#94a3b8" font-size="9">${years}年後</text>
+
+        <!-- Area under After curve -->
+        <polygon points="${areaAfter}" fill="rgba(16, 185, 129, 0.15)"/>
+
+        <!-- Principal Line -->
+        <polyline fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 3" points="${ptsPrin}"/>
+
+        <!-- Before Line -->
+        <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${ptsBefore}"/>
+
+        <!-- After Line -->
+        <polyline fill="none" stroke="#10b981" stroke-width="3" points="${ptsAfter}"/>
+      `;
+    }
+
+    // ================= MODALS FOR IRON RULE & ANNUAL TARGET =================
+    function openRuleModal() {
+      document.getElementById('simpleModalTitle').textContent = '🔥 鉄の掟 (マイルール) の編集';
+      const input = document.getElementById('simpleModalInput');
+      input.type = 'text';
+      input.value = appState.ironRule;
+      document.getElementById('simpleModalSaveBtn').onclick = () => {
+        appState.ironRule = input.value.trim() || 'ロットは絶対に張りすぎない！';
+        saveState();
+        updateHeaderControls();
+        closeSimpleModal();
+        showToast('マイルールを更新しました');
+      };
+      document.getElementById('simplePromptModal').classList.remove('hidden');
+    }
+
+    function openTargetModal() {
+      document.getElementById('simpleModalTitle').textContent = '🎯 年間目標利益 (円) の設定';
+      const input = document.getElementById('simpleModalInput');
+      input.type = 'number';
+      input.value = appState.annualTarget;
+      document.getElementById('simpleModalSaveBtn').onclick = () => {
+        appState.annualTarget = Math.max(10000, Number(input.value) || 1000000);
+        saveState();
+        renderCalendarAndStats();
+        closeSimpleModal();
+        showToast('年間目標利益を更新しました');
+      };
+      document.getElementById('simplePromptModal').classList.remove('hidden');
+    }
+
+    function closeSimpleModal() {
+      document.getElementById('simplePromptModal').classList.add('hidden');
+    }
+
+    // ================= TAB 4: OVERSEAS BROKER TAX ESTIMATOR =================
+    function calcJapaneseIncomeTax(taxableIncome) {
+      if (taxableIncome <= 0) return 0;
+      const t = Math.floor(taxableIncome / 1000) * 1000;
+      let tax = 0;
+      if (t <= 1950000) tax = t * 0.05;
+      else if (t <= 3300000) tax = t * 0.10 - 97500;
+      else if (t <= 6950000) tax = t * 0.20 - 427500;
+      else if (t <= 9000000) tax = t * 0.23 - 636000;
+      else if (t <= 18000000) tax = t * 0.33 - 1536000;
+      else if (t <= 40000000) tax = t * 0.40 - 2796000;
+      else tax = t * 0.45 - 4796000;
+      return Math.round(tax * 1.021); // Reconstruction tax 2.1%
+    }
+
+    function calcSalaryDeduction(salary) {
+      if (salary <= 1625000) return 550000;
+      if (salary <= 1800000) return salary * 0.4 - 100000;
+      if (salary <= 3600000) return salary * 0.3 + 80000;
+      if (salary <= 6600000) return salary * 0.2 + 440000;
+      if (salary <= 8500000) return salary * 0.1 + 1100000;
+      return 1950000;
+    }
+
+    function computeTaxNumbers() {
+      const salary = Math.max(0, Number(appState.tax.salary) || 0);
+      const expense = Math.max(0, Number(appState.tax.expense) || 0);
+
+      let calProfit = 0;
+      const yPrefix = `${appState.currentYear}-`;
+      Object.keys(appState.trades).forEach(k => {
+        if (k.startsWith(yPrefix)) {
+          calProfit += Number(appState.trades[k].pnl) || 0;
+        }
+      });
+
+      const hasOverride = appState.tax.overrideProfit !== '' && appState.tax.overrideProfit !== null && !isNaN(Number(appState.tax.overrideProfit));
+      const rawTradeProfit = hasOverride ? Number(appState.tax.overrideProfit) : calProfit;
+      const netMiscIncome = Math.max(0, rawTradeProfit - expense);
+
+      const salaryDeduction = calcSalaryDeduction(salary);
+      const salaryIncome = Math.max(0, salary - salaryDeduction);
+      const socialInsurance = Math.round(salary * 0.15);
+      const basicDeduction = 480000;
+
+      const taxableWithoutTrade = Math.max(0, salaryIncome - socialInsurance - basicDeduction);
+      const taxableWithTrade = Math.max(0, salaryIncome + netMiscIncome - socialInsurance - basicDeduction);
+
+      const totalTaxBase = calcJapaneseIncomeTax(taxableWithoutTrade) + Math.round(taxableWithoutTrade * 0.10);
+      const totalTaxWithTrade = calcJapaneseIncomeTax(taxableWithTrade) + Math.round(taxableWithTrade * 0.10);
+
+      const additionalTax = Math.max(0, totalTaxWithTrade - totalTaxBase);
+      const effectiveRate = netMiscIncome > 0 ? (additionalTax / netMiscIncome) * 100 : 0;
+
+      return {
+        calProfit,
+        tradeProfit: netMiscIncome,
+        additionalTax,
+        effectiveRate,
+        netAfterTax: rawTradeProfit - additionalTax
+      };
+    }
+
+    function saveTaxSettingsAndCalc() {
+      appState.tax.salary = Number(document.getElementById('taxSalaryInput').value) || 0;
+      appState.tax.expense = Number(document.getElementById('taxExpenseInput').value) || 0;
+      appState.tax.overrideProfit = document.getElementById('taxOverrideProfitInput').value;
+      saveState();
+      calculateTaxEstimate();
+      renderCalendarAndStats();
+    }
+
+    function calculateTaxEstimate() {
+      const info = computeTaxNumbers();
+      document.getElementById('taxCalendarProfitText').textContent = formatJPY(info.calProfit, true);
+      document.getElementById('taxEstimatedTotal').textContent = formatJPY(info.additionalTax);
+      document.getElementById('taxEffectiveRate').textContent = `${info.effectiveRate.toFixed(1)}%`;
+      document.getElementById('taxReserveAmount').textContent = formatJPY(info.additionalTax);
+      document.getElementById('taxNetTradeProfit').textContent = formatJPY(info.netAfterTax, true);
+    }
+
+    // ================= GOOGLE SHEETS SYNC & BACKUP =================
+    function openGasGuideModal() {
+      document.getElementById('gasGuideModal').classList.remove('hidden');
+    }
+    function closeGasGuideModal() {
+      document.getElementById('gasGuideModal').classList.add('hidden');
+    }
+    function copyGasCode() {
+      const code = document.getElementById('gasCodeSnippet').textContent;
+      copyToClipboard(code);
+      showToast('GAS連携コードをコピーしました！');
+    }
+
+    function saveGasUrl() {
+      appState.gasUrl = document.getElementById('gasWebAppUrl').value.trim();
+      saveState();
+    }
+
+    async function syncToGoogleSheet() {
+      const url = appState.gasUrl;
+      if (!url) {
+        showToast('先にGoogle Apps ScriptのURLを入力してください');
+        return;
+      }
+      const statusEl = document.getElementById('gasSyncStatus');
+      statusEl.classList.remove('hidden');
+      statusEl.textContent = '⏳ スプレッドシートへ送信中...';
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(appState)
+        });
+        statusEl.textContent = `✅ 保存完了 (${new Date().toLocaleTimeString()})`;
+        showToast('Googleスプレッドシートへデータを送信しました！');
+      } catch (err) {
+        statusEl.textContent = '❌ 送信エラー: URLを確認してください';
+      }
+    }
+
+    async function restoreFromGoogleSheet() {
+      const url = appState.gasUrl;
+      if (!url) {
+        showToast('先にGoogle Apps ScriptのURLを入力してください');
+        return;
+      }
+      const statusEl = document.getElementById('gasSyncStatus');
+      statusEl.classList.remove('hidden');
+      statusEl.textContent = '⏳ スプレッドシートから読込中...';
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.trades) {
+          appState = Object.assign({}, appState, data);
+          saveState();
+          renderAll();
+          statusEl.textContent = `✅ 復元完了 (${new Date().toLocaleTimeString()})`;
+          showToast('スプレッドシートからデータを完全復元しました！');
+        } else {
+          statusEl.textContent = '⚠️ 有効なデータが見つかりませんでした';
+        }
+      } catch (err) {
+        statusEl.textContent = '❌ 読込エラー: URLと公開権限を確認してください';
+      }
+    }
+
+    function downloadBackupFile() {
+      const dataStr = JSON.stringify(appState, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const d = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      a.href = url;
+      a.download = `akito_trade_backup_${d}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('バックアップファイルを保存しました！');
+    }
+
+    function uploadBackupFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.trades) {
+            appState = Object.assign({}, appState, parsed);
+            saveState();
+            renderAll();
+            showToast('ファイルからデータを完全に復元しました！');
+          }
+        } catch (err) {
+          showToast('ファイルの形式が正しくありません');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function copyBackupText() {
+      const str = JSON.stringify(appState);
+      document.getElementById('backupTextArea').value = str;
+      copyToClipboard(str);
+      showToast('バックアップコードをコピーしました！メモ帳等に貼って保管できます');
+    }
+
+    function restoreFromBackupText() {
+      const raw = document.getElementById('backupTextArea').value.trim();
+      if (!raw) {
+        showToast('復元するコードをテキスト欄に貼り付けてください');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.trades) {
+          appState = Object.assign({}, appState, parsed);
+          saveState();
+          renderAll();
+          showToast('テキストコードから完全に復元しました！');
+        }
+      } catch (e) {
+        showToast('コードが正しくありません');
+      }
+    }
+
+    function copyToClipboard(text) {
+      const temp = document.createElement('textarea');
+      temp.value = text;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      document.body.removeChild(temp);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderAll() {
+      updateHeaderControls();
+      document.getElementById('taxSalaryInput').value = appState.tax.salary;
+      document.getElementById('taxExpenseInput').value = appState.tax.expense;
+      document.getElementById('taxOverrideProfitInput').value = appState.tax.overrideProfit || '';
+      document.getElementById('gasWebAppUrl').value = appState.gasUrl || '';
+
+      renderCalendarAndStats();
+      selectInstrument(appState.lotCalc.instrument || 'JP225');
+      renderPortfolio();
+      updateCompoundSim();
+      calculateTaxEstimate();
+    }
+
+    window.onload = function () {
+      loadState();
+      renderAll();
+    };
+  </script>
+</body>
+</html>
