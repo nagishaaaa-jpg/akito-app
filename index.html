@@ -2878,6 +2878,50 @@ function doGet() {
       loadState();
       renderAll();
     };
+        // === 前回入力した資金・現在価格・値幅を自動保存＆復元する追加機能 ===
+    (function enableLotMemoryAndQuickSelect() {
+      const ids = ['calcEquity', 'calcCurrentPrice', 'calcEndureDistance', 'calcTargetStopPrice'];
+      
+      // 1. 入力欄をタップした瞬間に数字を全選択（1文字ずつ消さなくてOKに！）
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener('focus', function() {
+            setTimeout(() => this.select(), 50);
+          });
+        }
+      });
+
+      // 2. 入力するたびにスマホ本体へ自動保存
+      const saveInputs = () => {
+        const inst = appState.lotCalc.instrument || 'JP225';
+        if (!appState.lotCalc.savedInputs) appState.lotCalc.savedInputs = {};
+        appState.lotCalc.savedInputs[inst] = {
+          equity: document.getElementById('calcEquity').value,
+          price: document.getElementById('calcCurrentPrice').value,
+          dist: document.getElementById('calcEndureDistance').value
+        };
+        saveState();
+      };
+
+      ['calcEquity', 'calcCurrentPrice', 'calcEndureDistance', 'calcTargetStopPrice'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', saveInputs);
+      });
+
+      // 3. アプリ起動時や銘柄切替時に、前回保存した数字を自動で呼び出す
+      const origSelect = window.selectInstrument;
+      window.selectInstrument = function(instKey) {
+        origSelect(instKey);
+        const saved = appState.lotCalc.savedInputs && appState.lotCalc.savedInputs[instKey];
+        if (saved) {
+          if (saved.equity !== undefined) document.getElementById('calcEquity').value = saved.equity;
+          if (saved.price !== undefined) document.getElementById('calcCurrentPrice').value = saved.price;
+          if (saved.dist !== undefined) document.getElementById('calcEndureDistance').value = saved.dist;
+          onCurrentPriceChange();
+        }
+      };
+    })();
   </script>
 </body>
 </html>
